@@ -1,0 +1,22 @@
+{
+    "presets": ["babel-preset-expo"],
+    "plugins": [
+      [
+        "module-resolver",
+        {
+          "alias": {
+            "components": "./src/components",
+            "screens": "./src/screens",
+            "theme": "./src/theme",
+            "utils": "./src/utils",
+            "slices": "./src/redux/slices"
+          }
+        }
+      ],
+      "react-native-reanimated/plugin",
+      ["module:react-native-dotenv",{
+        "moduleName": "@env",
+        "path": ".env"
+      }]
+    ]
+}

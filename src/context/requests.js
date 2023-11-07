@@ -1,0 +1,22 @@
+import React, {createContext, useContext, useState} from "react";
+
+const RequestsContext = createContext();
+
+export const RequestsProvider = ({children}) => {
+  const [requests, setRequests] = useState([]);
+
+  return (
+    <RequestsContext.Provider
+      value={{
+        requests,
+        setRequests,
+      }}
+    >
+      {children}
+    </RequestsContext.Provider>
+  );
+};
+
+export const RequestsState = () => {
+  return useContext(RequestsContext);
+};
