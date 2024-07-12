@@ -1,21 +1,10 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-const {getDefaultConfig} = require("@expo/metro-config");
+const { getDefaultConfig } = require('expo/metro-config');
 
-module.exports = (async () => {
-  const defaultConfig = await getDefaultConfig(__dirname);
-  const { resolver: { sourceExts, assetExts } } = defaultConfig;
+const config = getDefaultConfig(__dirname);
 
-  return {
-    ...defaultConfig,
-    transformer: {
-      ...defaultConfig.transformer,
-      babelTransformerPath: require.resolve("react-native-svg-transformer"),
-      assetPlugins: ['expo-asset/tools/hashAssetFiles'],
-    },
-    resolver: {
-      ...defaultConfig.resolver,
-      assetExts: assetExts.filter(ext => ext !== "svg"),
-      sourceExts: [...sourceExts, "svg"],
-    },
-  };
-})();
+config.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer');
+config.transformer.assetPlugins = ['expo-asset/tools/hashAssetFiles'];
+config.resolver.assetExts = config.resolver.assetExts.filter(ext => ext !== 'svg');
+config.resolver.sourceExts.push('svg');
+
+module.exports = config;

@@ -11,11 +11,11 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/donation.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/donation.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#5AAE7F"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -38,11 +38,11 @@
     },
     "extra": {
       "eas": {
-        "projectId": "481e11a5-4a74-4a43-8416-862a10e0447c"
+        "projectId": "bbea7046-eaf0-4b5a-afd8-446de896f004"
       }
     },
     "android": {
-      "package": "com.gimase.foodhauz"
+      "package": "com.gimase.FoodHauza"
     }
   }
 }
