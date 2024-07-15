@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "food-hauz",
-    "slug": "food-hauz",
+    "name": "FoodHauza",
+    "slug": "FoodHauza",
+     "scheme": "FoodHauza",
     "owner": "gimase",
     "privacy": "public",
     "platforms": [

@@ -1,5 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react'
 import { Dimensions, ImageBackground, View, StyleSheet } from 'react-native'
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { colors } from 'theme'
 import {
   Box,
@@ -202,6 +203,24 @@ const SignUp = ({navigation}) => {
                 }
               />
             </FormControl>
+            <Text alignSelf="center" color="#054544" fontWeight="semibold">
+            ------------------------ or ------------------------
+          </Text>
+            <Text alignSelf="center" color="#054544" fontWeight="semibold" pt={4}>
+            SignUp With
+          </Text>
+          <HStack
+            alignItems="center"
+            space={5}
+            alignSelf="center"
+            pb={5}
+            pt={2}
+          >
+            <FontAwesome5 name="facebook" size={40} color="black" />
+            <AntDesign name="google" size={40} color="black" />
+          </HStack>
+
+         
             <HStack space={1} mt={2}>
               <Checkbox accessibilityLabel="checkbox"  aria-label="Checkbox" />
               <Text w="90%">
