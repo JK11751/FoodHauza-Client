@@ -105,11 +105,9 @@ const Profile = ({ navigation }) => {
                   w="135px"
                   h="135px"
                   bg="green.500"
-                  size="2xl"
-                  // mt="10px"
-                  source={{
-                    uri: "https://bit.ly/sage-adebayo",
-                  }}
+                  size="2xl"y
+                  source={{ uri: auth.user.profile_pic }}
+                  
                 />
               </Circle>
               <Box

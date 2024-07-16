@@ -91,7 +91,13 @@ const DonorDash = ({navigation}) => {
                 What would you like to donate today?
               </Text>
             </Box>
-            <Image source={auth.user.profile_pic || images.profile_img} alt="donation image" />
+            <Image
+                  source={{ uri: auth.user.profile_pic }}
+                  alt="Profile Picture"
+                  size="lg"
+                  borderRadius="full"
+                />
+            
           </Flex>
           <Flex
             alignItems="center"

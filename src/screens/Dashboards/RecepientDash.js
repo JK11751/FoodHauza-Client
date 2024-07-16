@@ -3,7 +3,7 @@ import {StyleSheet, StatusBar, Text} from "react-native";
 import {colors} from "theme";
 import {Box, Circle, Flex, HStack, Image, ScrollView, Stack, VStack} from "native-base";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {images} from "../../theme";
+//import {images} from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
 import { DonationsState } from "../../context";
@@ -156,7 +156,13 @@ const RecepientDash = ({navigation}) => {
                   Check out recent food donations here
                 </Text>
               </Box>
-              <Image source={images.profile_img} alt="donation image" />
+                <Image
+                  source={{ uri: auth.user.profile_pic }}
+                  alt="Profile Picture"
+                  size="lg"
+                  borderRadius="full"
+                />
+            
             </Flex>
             <Box
               px="30px"
@@ -185,8 +191,8 @@ const RecepientDash = ({navigation}) => {
                         <Circle
                           // py="7"
                           // px="7"
-                          w={16}
-                          h={16}
+                          w={10}
+                          h={10}
                           borderRadius="30"
                           bg="gray.300"
                         ></Circle>
