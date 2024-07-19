@@ -6,7 +6,6 @@ import {
   Image,
   Text,
   Center,
-  HStack,
   Stack,
 } from "native-base";
 import { TouchableOpacity } from "react-native";
@@ -72,9 +71,9 @@ const TopDonationCard = ({ navigation, donation }) => {
               </Stack>
               <Text fontWeight="400">
                 Description:{" "}
-                {donation.foods.map((d) => {
-                  return <Text> {d.description}</Text>;
-                })}
+                {donation.foods.map((d, index) => (
+                  <Text key={index}> {d.description}</Text>
+                ))}
               </Text>
             </Stack>
           </Box>
@@ -83,4 +82,5 @@ const TopDonationCard = ({ navigation, donation }) => {
     </TouchableOpacity>
   );
 };
+
 export default TopDonationCard;

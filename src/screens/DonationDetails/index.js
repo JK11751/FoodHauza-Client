@@ -1,5 +1,5 @@
-import { Dimensions, StyleSheet} from 'react-native'
-import React from 'react'
+import { Dimensions, StyleSheet } from "react-native";
+import React from "react";
 import {
   AspectRatio,
   Text,
@@ -11,31 +11,29 @@ import {
   Stack,
   ThreeDotsIcon,
   Spacer,
+  Button,
   ChevronLeftIcon,
   Pressable,
   View,
-  Flex,
   VStack,
   useToast,
 } from "native-base";
-import { colors } from '../../theme';
-import { useAuth } from '../../hooks/useAuth';
-import { useState } from 'react';
-import axios from 'axios';
-import { useEffect } from 'react';
-import { SkeletonLoader } from '../../components/GeneralLoading';
-import { BASE_API_URL } from '../../utils/api';
-import { useRef } from 'react';
-import RequestReceived from '../../components/RecepientRequest/RecepientRequest';
+import { colors } from "../../theme";
+import { useAuth } from "../../hooks/useAuth";
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { SkeletonLoader } from "../../components/GeneralLoading";
+import { BASE_API_URL } from "../../utils/api";
+import RequestReceived from "../../components/RecepientRequest/RecepientRequest";
 
-const DonationDetails = ({route, navigation}) => {
-   const [show, setShow] = React.useState(false);
+const DonationDetails = ({ route, navigation }) => {
+  const [show, setShow] = React.useState(false);
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
   const auth = useAuth();
   const [requestDetails, setRequestDetails] = useState({});
   const [loading, setLoading] = useState(false);
-  const { donation_id }= route.params 
+  const { donation_id } = route.params;
 
   const fetchRequestDetails = async () => {
     const token = auth.token ? auth.token : null;
@@ -54,114 +52,81 @@ const DonationDetails = ({route, navigation}) => {
         config
       );
       if (response.data) {
-        setLoading(false);
-
-        // Success 🎉
-        console.log("response", response);
         setRequestDetails(response.data);
+        setLoading(false);
       }
     } catch (error) {
-      // Error 😨
-      if (error.response) {
-        /*
-         * The request was made and the server responded with a
-         * status code that falls out of the range of 2xx
-         */
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        /*
-         * The request was made but no response was received, `error.request`
-         * is an instance of XMLHttpRequest in the browser and an instance
-         * of http.ClientRequest in Node.js
-         */
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request and triggered an Error
-        console.log("Error", error.message);
-      }
-      console.log(error);
-    }
+      console.error(error);
+    } 
   };
 
   useEffect(() => {
     fetchRequestDetails();
-  }, []);
+  }, [donation_id]);
 
-   const [error, setError] = React.useState("");
-   const [loadingRequest, setLoadingRequest] = useState(false);
-   const toast = useToast();
-   const toastRef = useRef();
-   const today = new Date()
+  const [error, setError] = React.useState("");
+  const toast = useToast();
+  const toastRef = useRef();
+  const today = new Date();
   const requestor_id = auth.user._id;
-   var iso = today.getDate()
-   console.log("iso",iso)
-   const data = {
-     "donation": [{donation_id}],
-    "requestor": [{requestor_id}],
-     "accepted": true,
-     "delivered": true,
-     "cancelled": false,
-     "requested_date": "2022-12-15T10:59:58.331Z",
-     "delivered_date": "2022-12-15T10:59:58.331Z",
-   };
 
-   const createDonationRequest = async () => {
-     const token = auth.token ? auth.token : null;
+  const data = {
+    donation: [donation_id ],
+    requestor: [requestor_id ],
+    accepted: false,
+    delivered: false,
+    cancelled: false,
+    requested_date: today.toISOString(),
+    delivered_date: today.toISOString(),
+  };
 
-     const config = {
-       headers: {
-         "Content-type": "application/json",
-         Authorization: `Bearer ${token}`,
-       },
-     };
+  const createDonationRequest = async () => {
+    const token = auth.token ? auth.token : null;
 
-     try {
-       setLoading(true);
-       const response = await axios.post(
-         `${BASE_API_URL}/requests`,
-         data,
-         config
-       );
-       if (response.data && response.status === 201) {
-         setLoading(false);
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
 
-         // Success 🎉
-         console.log("response", response);
-         setShow(true);
-       }
-       console.log(data);
-     } catch {
-       (err) => {
-        setLoading(false)
-         setError(err.message);
-         console.log("upload " + err.message);
-       };
-     }
-   };
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${BASE_API_URL}/requests`,
+        data,
+        config
+      );
+      if (response.status === 201) {
+        setShow(true);
+      }
+    } catch (err) {
+      setError(err.message);
+    } 
+  };
 
-   useEffect(() => {
-     if (error) {
-       showMessage(error);
-     }
-     if (loading) {
-       showLoading("loading");
-     }
-   }, [error, loading]);
+  useEffect(() => {
+    if (error) {
+      showMessage(error);
+    }
+    if (loading) {
+      showLoading("loading");
+    }
+  }, [error, loading]);
 
-   const showMessage = (errMessage) => {
-     toastRef.current = toast.show({
-       title: errMessage,
-       placement: "top",
-     });
-   };
-   const showLoading = (loadingText) => {
-     toastRef.current = toast.show({
-       title: loadingText,
-       placement: "top",
-     });
-   };
+  const showMessage = (errMessage) => {
+    toastRef.current = toast.show({
+      title: errMessage,
+      placement: "top",
+    });
+  };
+
+  const showLoading = (loadingText) => {
+    toastRef.current = toast.show({
+      title: loadingText,
+      placement: "top",
+    });
+  };
 
   return (
     <View background={"white"} h={screenHeight}>
@@ -174,14 +139,11 @@ const DonationDetails = ({route, navigation}) => {
           w={screenWidth}
           bg={colors.primary_color}
           position="relative"
-          onPress={() => {
-            navigation.navigate("RecepientDashboard");
-          }}
         >
           <HStack paddingTop="20px" alignItems="center">
             <Pressable
               onPress={() => {
-                navigation.navigate("RecepientDashboard");
+                navigation.goBack();
               }}
             >
               <ChevronLeftIcon paddingLeft="50px" color="white" />
@@ -222,7 +184,9 @@ const DonationDetails = ({route, navigation}) => {
                     <Image
                       borderRadius={"5px"}
                       source={{
-                        uri: "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
+                        uri:
+                          requestDetails.foods[0]?.images[0] ||
+                          "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
                       }}
                       alt="image"
                     />
@@ -249,7 +213,7 @@ const DonationDetails = ({route, navigation}) => {
                 <Stack p="4" space={3} mt="5">
                   <Stack space={2}>
                     <Heading size="md" ml="-1">
-                      Donation Pack
+                      Donation Details
                     </Heading>
                     <Text
                       fontSize="xs"
@@ -263,57 +227,82 @@ const DonationDetails = ({route, navigation}) => {
                       ml="-0.5"
                       mt="-1"
                     >
-                      {requestDetails?.donation?.length} donation
+                      {requestDetails.foods.length} donation(s) available
                     </Text>
-                    <Stack space={4}>
-                      {requestDetails.donation.map((don) => {
-                        return (
-                          <Stack space={4}>
-                            {don?.foods?.map((f) => {
-                              return (
-                                <Box
-                                  flexDir={"row"}
-                                  bg="gray.50"
-                                  h="70px"
-                                  p={2}
-                                  borderRadius={"5px"}
-                                >
-                                  <VStack py={2}>
-                                    <Text>
-                                      {f.food.map((fo) => {
-                                        return <Text>{fo}, </Text>;
-                                      })}
-                                    </Text>
-                                    <Text fontWeight="400" color="black">
-                                      {f.description}
-                                    </Text>
-                                  </VStack>
-                                </Box>
-                              );
-                            })}
-                          </Stack>
-                        );
-                      })}
+                    <Stack bg="gray.50" space={4}>
+                      {requestDetails.foods.map((f) => (
+                        <Stack space={4} key={f._id}>
+                          <Box
+                            flexDir="row"
+                            h="150px"
+                            pl={2}
+                            borderRadius="5px"
+                            bg="gray.50"
+                            alignItems="center"
+                            justifyContent="space-between"
+                          >
+                            <VStack py={2}>
+                              <Text>
+                                {f.food.map((fo, index) => (
+                                  <Text key={index}>
+                                    {fo}
+                                    {index !== f.food.length - 1 && ", "}
+                                  </Text>
+                                ))}
+                              </Text>
+                              <Text fontWeight="400" color="black">
+                                {f.description}
+                              </Text>
+                              <HStack space={2} alignItems="center">
+                                <Text r>
+                                  Amount:
+                                </Text>
+                                <Text fontWeight="400" color="black">
+                                  {f.amount}
+                                </Text>
+                              </HStack>
+                              <HStack space={2} alignItems="center">
+                                <Text fontWeight="500" color="black">
+                                  Unit:
+                                </Text>
+                                <Text fontWeight="400" color="black">
+                                  {f.unit}
+                                </Text>
+                              </HStack>
+                            </VStack>
+                          </Box>
+                        </Stack>
+                      ))}
                     </Stack>
                   </Stack>
-
-                  <HStack
-                    alignItems="center"
-                    space={4}
-                    justifyContent="space-between"
-                  >
-                    <HStack alignItems="center">
+                  <VStack space={4} alignItems="flex-start" mt={2}>
+                    <HStack space={2} alignItems="center">
+                      <Text color="black" fontWeight="400">
+                        Created At:
+                      </Text>
                       <Text
                         color="coolGray.600"
-                        _dark={{
-                          color: "warmGray.200",
-                        }}
+                        _dark={{ color: "warmGray.200" }}
                         fontWeight="400"
                       >
-                        6 mins ago
+                        {new Date(requestDetails.createdAt).toLocaleString()}
                       </Text>
                     </HStack>
-                  </HStack>
+
+                    <HStack space={2} alignItems="center">
+                      <Text color="black" fontWeight="400">
+                        Location:
+                      </Text>
+                      <Text
+                        color="coolGray.600"
+                        _dark={{ color: "warmGray.200" }}
+                        fontWeight="400"
+                      >
+                        {requestDetails.location.join(", ")}
+                      </Text>
+                    </HStack>
+                  </VStack>
+
                   <Button
                     mt={5}
                     borderRadius="50px"
@@ -332,14 +321,9 @@ const DonationDetails = ({route, navigation}) => {
           )}
         </Box>
       )}
-      <RequestReceived
-        show={show}
-        setShow={setShow}
-        navigation={navigation}
-      />
+      <RequestReceived show={show} setShow={setShow} navigation={navigation} />
     </View>
   );
-}
+};
 
-export default DonationDetails
-
+export default DonationDetails;
