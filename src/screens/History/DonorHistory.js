@@ -45,7 +45,7 @@ const DonorHistory = ({navigation}) => {
         setLoading(false);
 
         // Success 🎉
-        console.log("response", response);
+        console.log("response", response.data);
         setDonations(response.data);
       }
     } catch (error) {

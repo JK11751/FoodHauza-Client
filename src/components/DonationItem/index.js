@@ -33,11 +33,11 @@ const DonationItem = ({navigation, donation, route}) => {
                 <AspectRatio w="55%" ratio={9 / 9}>
                   <Image
                     source={{
-                      uri: donation.image
-                        ? donation.image
-                        : "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
+                      uri:
+                        donation.foods[0]?.images[0] ||
+                        "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
                     }}
-                    alt="my image"
+                    alt="image"
                   />
                 </AspectRatio>
               </Box>
@@ -53,8 +53,8 @@ const DonationItem = ({navigation, donation, route}) => {
                     {donation?.foods?.map((f) => {
                       return (
                         <Text>
-                          {f.food.slice(-1).map((fd) => {
-                            return <Text>{fd}</Text>;
+                       {f.food.slice(-1).map((fd, fdIndex)  => {
+                             return <Text key={fdIndex}>{fd}</Text>;
                           })}
                         </Text>
                       );
@@ -66,15 +66,14 @@ const DonationItem = ({navigation, donation, route}) => {
                     fontWeight="700"
                     fontSize="10px"
                   >
-                    {donation?.foods?.slice(-1).map((f) => {
+                    {donation?.foods?.slice(-1).map((f, index) => {
                       return (
-                        <HStack>
+                        <HStack key={index}>
                           <Text>{f.amount}</Text>
                           <Text> {f.unit}</Text>
                         </HStack>
                       );
                     })}
-                    Hello
                   </Text>
                 </VStack>
               </Box>
