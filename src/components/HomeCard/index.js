@@ -9,8 +9,8 @@ const styles = StyleSheet.create({
   },
 })
 
-const HomeCard = ({ title, description }) => (
-  <TouchableOpacity>
+const HomeCard = ({ title, description, onPress }) => (
+  <TouchableOpacity onPress={onPress} >
     <Flex
       px="30px"
       py="35px"
@@ -30,11 +30,13 @@ const HomeCard = ({ title, description }) => (
 HomeCard.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
-}
+  onPress: PropTypes.func,
+};
 
 HomeCard.defaultProps = {
   title: null,
   description: null,
-}
+  onPress: () => {},
+};
 
 export default HomeCard

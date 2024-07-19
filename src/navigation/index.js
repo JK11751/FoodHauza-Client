@@ -1,6 +1,6 @@
-import React, {useEffect} from "react";
-import {NavigationContainer} from "@react-navigation/native";
-import {createStackNavigator} from "@react-navigation/stack";
+import React, { useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import Onboarding from "../screens/OnBoarding";
 import SignUp from "../screens/Account/SignUp";
@@ -17,14 +17,16 @@ import { RecepientTabNavigator } from "./Tabs/RecepientTabNavigator";
 import DonorHistory from "../screens/History/DonorHistory";
 import RecepientHistory from "../screens/History/RecepientHistory";
 import DonationDetails from "../screens/DonationDetails";
-import DonationHistoryCards from "../screens/DonationHistory/ViewDonationsHistory/DonationHistoryCards.js"
+import DonationHistoryCards from "../screens/DonationHistory/ViewDonationsHistory/DonationHistoryCards.js";
 import TopDonationCards from "../screens/DonationHistory/TopDonationsHistory/TopDonationCards";
 import AllDonations from "../screens/AllDonations";
 import DonorDonationDetails from "../screens/DonationDetails/DonorDonationDetails";
-
+import DonationTipsScreen from "../screens/DonationTips/DonationTipsScreen.js";
+import FoodBankScreen from "../screens/DonationTips/FoodBankScreen.js";
+import CommunityDonationsScreen from "../screens/DonationTips/CommunityDonationsScreen.js";
 
 const Stack = createStackNavigator();
-const Tab = createStackNavigator()
+const Tab = createStackNavigator();
 
 const Navigator = () => {
   const auth = useAuth();
@@ -32,11 +34,11 @@ const Navigator = () => {
   // TODO: switch router by loggedIn state
   console.log("[##] loggedIn", auth.user);
 
-  function Unauthenticated () {
+  function Unauthenticated() {
     return (
       <Tab.Navigator
         initialRouteName="Onboarding"
-        screenOptions={{headerShown: false}}
+        screenOptions={{ headerShown: false }}
       >
         <Tab.Screen name="Onboarding" component={Onboarding} />
         <Tab.Screen name="SignUp" component={SignUp} />
@@ -54,58 +56,58 @@ const Navigator = () => {
             <Stack.Screen
               name="DonorDashboard"
               component={DonorTabNavigator}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="RecepientDashboard"
               component={RecepientTabNavigator}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
 
             <Stack.Screen
               name="SelectLocation"
               component={SelectLocation}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="DonationPackStart"
               component={DonationPageNavigator}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="DonationPackCards"
               component={DonationPackCards}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="Profile"
               component={Profile}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="Notifications"
               component={Notifications}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="RecepientHistory"
               component={RecepientHistory}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="DonorHistory"
               component={DonorHistory}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="DonationDetails"
               component={DonationDetails}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="DonorDonationDetails"
               component={DonorDonationDetails}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="TopDonationCards"
@@ -117,15 +119,30 @@ const Navigator = () => {
             />
             <Stack.Screen
               name="AllDonations"
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
               component={AllDonations}
+            />
+            <Stack.Screen
+              name="DonationTips"
+              options={{ headerShown: false }}
+              component={DonationTipsScreen}
+            />
+            <Stack.Screen
+              name="FoodBank"
+              options={{ headerShown: false }}
+              component={FoodBankScreen}
+            />
+            <Stack.Screen
+              name="CommunityDonations"
+              options={{ headerShown: false }}
+              component={CommunityDonationsScreen}
             />
           </Stack.Group>
         ) : (
           <Stack.Screen
             name="Unauthenticated"
             component={Unauthenticated}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
         )}
       </Stack.Navigator>

@@ -52,12 +52,32 @@ const DonationDetails = ({ route, navigation }) => {
         config
       );
       if (response.data) {
-        setRequestDetails(response.data);
         setLoading(false);
+        setRequestDetails(response.data);
       }
     } catch (error) {
-      console.error(error);
-    } 
+      // Error 😨
+      if (error.response) {
+        /*
+         * The request was made and the server responded with a
+         * status code that falls out of the range of 2xx
+         */
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        /*
+         * The request was made but no response was received, `error.request`
+         * is an instance of XMLHttpRequest in the browser and an instance
+         * of http.ClientRequest in Node.js
+         */
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request and triggered an Error
+        console.log("Error", error.message);
+      }
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -71,8 +91,8 @@ const DonationDetails = ({ route, navigation }) => {
   const requestor_id = auth.user._id;
 
   const data = {
-    donation: [donation_id ],
-    requestor: [requestor_id ],
+    donation: [donation_id],
+    requestor: [requestor_id],
     accepted: false,
     delivered: false,
     cancelled: false,
@@ -97,12 +117,21 @@ const DonationDetails = ({ route, navigation }) => {
         data,
         config
       );
-      if (response.status === 201) {
+      if (response.data && response.status === 201) {
+        setLoading(false);
+
+        // Success 🎉
+        console.log("response", response);
         setShow(true);
       }
-    } catch (err) {
-      setError(err.message);
-    } 
+      console.log(data);
+    } catch {
+      (err) => {
+        setLoading(false);
+        setError(err.message);
+        console.log("upload " + err.message);
+      };
+    }
   };
 
   useEffect(() => {
@@ -254,9 +283,7 @@ const DonationDetails = ({ route, navigation }) => {
                                 {f.description}
                               </Text>
                               <HStack space={2} alignItems="center">
-                                <Text r>
-                                  Amount:
-                                </Text>
+                                <Text r>Amount:</Text>
                                 <Text fontWeight="400" color="black">
                                   {f.amount}
                                 </Text>

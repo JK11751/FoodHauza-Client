@@ -16,17 +16,17 @@ const HomeLinks = [
   {
     title: "Donation Tips",
     description: "Learn about in-need products and our donation guidelines",
-    link: "#",
+    link: "DonationTips",
   },
   {
-    title: "Your Food Bank",
+    title: "My Food Bank",
     description: "Learn more about your local food bank and the services they offer",
-    link: "#",
+    link: "FoodBank",
   },
   {
     title: "Community Donations",
     description: "Get the scoop on how others in your area are donating",
-    link: "#",
+    link: "CommunityDonations",
   },
 ];
 
@@ -122,6 +122,7 @@ const DonorDash = ({navigation}) => {
             key={`link-${index}`}
             title={link.title}
             description={link.description}
+            onPress={() => navigation.navigate(link.link)}
           />
         ))}
       </VStack>
