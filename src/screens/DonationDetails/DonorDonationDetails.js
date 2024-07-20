@@ -25,7 +25,6 @@ import axios from "axios";
 import { SkeletonLoader } from "../../components/GeneralLoading";
 import { BASE_API_URL } from "../../utils/api";
 
-
 const DonationDetails = ({ route, navigation }) => {
   const [show, setShow] = React.useState(false);
   const screenWidth = Dimensions.get("window").width;
@@ -109,7 +108,7 @@ const DonationDetails = ({ route, navigation }) => {
             </Pressable>
             <Spacer />
             <Text color="#FFFFFF" fontSize="20px" fontWeight="700">
-              Donation Request Details
+              Donation Details
             </Text>
             <Spacer />
             <ThreeDotsIcon paddingRight="50px" color="white" />
@@ -172,21 +171,25 @@ const DonationDetails = ({ route, navigation }) => {
                 <Stack p="4" space={3} mt="5">
                   <Stack space={2}>
                     <Heading size="md" ml="-1">
-                      Donation Details
+                      My Donation Details
                     </Heading>
                     <Text
-                      fontSize="xs"
+                      fontSize="sm"
                       _light={{
-                        color: "violet.500",
+                        color: "violet.600",
                       }}
                       _dark={{
                         color: "violet.400",
                       }}
                       fontWeight="500"
-                      ml="-0.5"
-                      mt="-1"
+                      ml={-1}
+                      mt={-0.5}
                     >
-                      {requestDetails.foods.length} donation(s) available
+                      You have made{" "}
+                      <Text fontSize="md" color="black" fontWeight="bold">
+                        {requestDetails.foods.length}
+                      </Text>{" "}
+                      donation{requestDetails.foods.length > 1 ? "s" : ""}
                     </Text>
                     <Stack bg="gray.50" space={4}>
                       {requestDetails.foods.map((f) => (
@@ -226,50 +229,38 @@ const DonationDetails = ({ route, navigation }) => {
                                   {f.unit}
                                 </Text>
                               </HStack>
+                              <HStack space={2} alignItems="center">
+                                <Text color="black" fontWeight="400">
+                                  Location:
+                                </Text>
+                                <Text
+                                  color="coolGray.600"
+                                  _dark={{ color: "warmGray.200" }}
+                                  fontWeight="400"
+                                >
+                                  {requestDetails.location.join(", ")}
+                                </Text>
+                              </HStack>
+                              <HStack space={2} alignItems="center">
+                                <Text color="black" fontWeight="400">
+                                  Created At:
+                                </Text>
+                                <Text
+                                  color="coolGray.600"
+                                  _dark={{ color: "warmGray.200" }}
+                                  fontWeight="400"
+                                >
+                                  {new Date(
+                                    requestDetails.createdAt
+                                  ).toLocaleString()}
+                                </Text>
+                              </HStack>
                             </VStack>
                           </Box>
                         </Stack>
                       ))}
                     </Stack>
                   </Stack>
-                  <VStack space={4} alignItems="flex-start" mt={2}>
-                    <HStack space={2} alignItems="center">
-                      <Text color="black" fontWeight="400">
-                        Created At:
-                      </Text>
-                      <Text
-                        color="coolGray.600"
-                        _dark={{ color: "warmGray.200" }}
-                        fontWeight="400"
-                      >
-                        {new Date(requestDetails.createdAt).toLocaleString()}
-                      </Text>
-                    </HStack>
-
-                    <HStack space={2} alignItems="center">
-                      <Text color="black" fontWeight="400">
-                        Location:
-                      </Text>
-                      <Text
-                        color="coolGray.600"
-                        _dark={{ color: "warmGray.200" }}
-                        fontWeight="400"
-                      >
-                        {requestDetails.location.join(", ")}
-                      </Text>
-                    </HStack>
-                  </VStack>
-
-                  <Button
-                    mt={5}
-                    borderRadius="50px"
-                    h="40px"
-                    bg={colors.primary_color}
-                    position="relative"
-                    onPress={createDonationRequest}
-                  >
-                    Request Donation
-                  </Button>
                 </Stack>
               </Box>
             </Box>

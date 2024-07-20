@@ -12,7 +12,7 @@ import {
   VStack,
 } from "native-base";
 import {colors} from "../../theme";
-import DonationItem from "../../components/DonationItem";
+import DonationItem from "../../components/DonationItem/DonationItemDonor";
 import { DonationsState } from "../../context";
 import { useAuth } from "../../hooks/useAuth";
 import { useState } from "react";

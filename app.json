@@ -36,14 +36,6 @@
         "ts",
         "tsx"
       ]
-    },
-    "extra": {
-      "eas": {
-        "projectId": "7cd2f465-869e-4222-a949-6034679f700a"
-      }
-    },
-    "android": {
-      "package": "com.gimase.foodhauza"
     }
   }
 }

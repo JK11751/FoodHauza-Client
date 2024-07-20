@@ -9,7 +9,6 @@ const DonationItem = ({navigation, donation, route}) => {
     <View>
       <TouchableOpacity
         onPress={() => {
-          console.log('Navigating to:', route, 'with donation_id:', donation._id);
           navigation.navigate(route, { donation_id: donation._id });
         }}
       >
@@ -77,7 +76,6 @@ const DonationItem = ({navigation, donation, route}) => {
                         </HStack>
                       );
                     })}
-                    Hello
                   </Text>
                 </VStack>
               </Box>

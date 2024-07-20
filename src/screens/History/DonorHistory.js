@@ -17,7 +17,7 @@ import { BASE_API_URL } from "../../utils/api";
 import { DonationsState } from "../../context";
 import { useAuth } from "../../hooks/useAuth";
 import { SkeletonLoader } from "../../components/GeneralLoading";
-import DonationItem from "../../components/DonationItem";
+import DonationItemDonor from "../../components/DonationItem/DonationItemDonor";
 
 const DonorHistory = ({navigation}) => {
   const screenWidth = Dimensions.get("window").width;
@@ -116,9 +116,9 @@ const DonorHistory = ({navigation}) => {
           <Box>
             {donations?.length > 0 ? (
               <Stack space={3}>
-                {donations?.map((donation) => {
+                {donations?.map((donation, index) => {
                   return (
-                    <DonationItem
+                    <DonationItemDonor
                       navigation={navigation}
                       key={donation._id}
                       donation={donation}
