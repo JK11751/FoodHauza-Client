@@ -116,7 +116,7 @@ const DonorHistory = ({navigation}) => {
           <Box>
             {donations?.length > 0 ? (
               <Stack space={3}>
-                {donations?.map((donation, index) => {
+                {donations?.map((donation) => {
                   return (
                     <DonationItemDonor
                       navigation={navigation}
