@@ -44,14 +44,15 @@ const TopDonationCard = ({ navigation, donation }) => {
           >
             <Box>
               <AspectRatio w="100%" ratio={16 / 6}>
-                <Image
-                  source={{
-                    uri: donation.image
-                      ? donation.image
-                      : "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
-                  }}
-                  alt="image"
-                />
+              <Image
+                      
+                      source={{
+                        uri:
+                          donation.foods[0]?.images[0] ||
+                          "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
+                      }}
+                      alt="image"
+                    />
               </AspectRatio>
             </Box>
             <Stack p="5" space={1}>

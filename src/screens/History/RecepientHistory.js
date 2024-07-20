@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from "native-base";
 import {colors} from "../../theme";
-import { DonationItemRecepient } from "../../components/DonationItem";
+import  DonationItemRecepient  from "../../components/DonationItem/DonationItemRecepient";
 import { BASE_API_URL } from "../../utils/api";
 import axios from "axios";
 import { useState } from "react";
@@ -102,7 +102,7 @@ const RecepientHistory = ({navigation}) => {
             </Pressable>
             <Spacer />
             <Text color="#FFFFFF" fontSize="20px" fontWeight="700">
-              History
+              My Request History
             </Text>
             <Spacer />
             <ThreeDotsIcon paddingRight="50px" color="white" />
@@ -117,10 +117,10 @@ const RecepientHistory = ({navigation}) => {
           <Box>
             {requests?.length > 0 ? (
               <Box>
-                {requests?.map((request) => {
-                  return <DonationItemRecepient navigation={navigation} key={request._id} donation={request} route={"DonationDetails"} />;
-                })}
-              </Box>
+              {requests?.map((request) => (
+                <DonationItemRecepient key={request._id} request={request} />
+              ))}
+            </Box>
             ) : (
               <Text>No donations requests yet</Text>
             )}

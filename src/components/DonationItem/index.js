@@ -8,7 +8,10 @@ const DonationItem = ({navigation, donation, route}) => {
   return (
     <View>
       <TouchableOpacity
-        onPress={() => navigation.navigate(route, {donation_id: donation._id})}
+        onPress={() => {
+          console.log('Navigating to:', route, 'with donation_id:', donation._id);
+          navigation.navigate(route, { donation_id: donation._id });
+        }}
       >
           <Box
             w="full"
@@ -33,11 +36,11 @@ const DonationItem = ({navigation, donation, route}) => {
                 <AspectRatio w="55%" ratio={9 / 9}>
                   <Image
                     source={{
-                      uri:
-                        donation.foods[0]?.images[0] ||
-                        "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
+                      uri: donation.image
+                        ? donation.image
+                        : "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
                     }}
-                    alt="image"
+                    alt="my image"
                   />
                 </AspectRatio>
               </Box>
@@ -53,8 +56,8 @@ const DonationItem = ({navigation, donation, route}) => {
                     {donation?.foods?.map((f) => {
                       return (
                         <Text>
-                       {f.food.slice(-1).map((fd, fdIndex)  => {
-                             return <Text key={fdIndex}>{fd}</Text>;
+                          {f.food.slice(-1).map((fd) => {
+                            return <Text>{fd}</Text>;
                           })}
                         </Text>
                       );
@@ -66,14 +69,15 @@ const DonationItem = ({navigation, donation, route}) => {
                     fontWeight="700"
                     fontSize="10px"
                   >
-                    {donation?.foods?.slice(-1).map((f, index) => {
+                    {donation?.foods?.slice(-1).map((f) => {
                       return (
-                        <HStack key={index}>
+                        <HStack>
                           <Text>{f.amount}</Text>
                           <Text> {f.unit}</Text>
                         </HStack>
                       );
                     })}
+                    Hello
                   </Text>
                 </VStack>
               </Box>

@@ -179,7 +179,7 @@ const DonationDetails = ({ route, navigation }) => {
             </Pressable>
             <Spacer />
             <Text color="#FFFFFF" fontSize="20px" fontWeight="700">
-              Donation Request Details
+              Donation Details
             </Text>
             <Spacer />
             <ThreeDotsIcon paddingRight="50px" color="white" />

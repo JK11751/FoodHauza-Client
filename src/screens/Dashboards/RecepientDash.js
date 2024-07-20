@@ -169,7 +169,7 @@ const RecepientDash = ({navigation}) => {
               pt={2}
             >
               <Text>Categories</Text>
-              <ScrollView horizontal pt={2}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}  pt={2}>
                 <HStack
                   space={{
                     base: 2,

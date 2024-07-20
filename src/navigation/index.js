@@ -16,7 +16,7 @@ import { useAuth } from "../hooks/useAuth";
 import { RecepientTabNavigator } from "./Tabs/RecepientTabNavigator";
 import DonorHistory from "../screens/History/DonorHistory";
 import RecepientHistory from "../screens/History/RecepientHistory";
-import DonationDetails from "../screens/DonationDetails";
+import RecepientDonationDetails from "../screens/DonationDetails/RecepientDonationDetails.js";
 import DonationHistoryCards from "../screens/DonationHistory/ViewDonationsHistory/DonationHistoryCards.js";
 import TopDonationCards from "../screens/DonationHistory/TopDonationsHistory/TopDonationCards";
 import AllDonations from "../screens/AllDonations";
@@ -101,7 +101,7 @@ const Navigator = () => {
             />
             <Stack.Screen
               name="DonationDetails"
-              component={DonationDetails}
+              component={RecepientDonationDetails}
               options={{ headerShown: false }}
             />
             <Stack.Screen
