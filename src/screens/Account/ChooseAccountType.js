@@ -75,7 +75,7 @@ const ChooseAccountType = ({ route, navigation }) => {
 
   const showMessage = (errMessage) => {
     toastRef.current = toast.show({
-      title: errMessage,
+      title: "User already exists",
       placement: "top",
     });
   };
