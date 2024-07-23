@@ -32,8 +32,6 @@ const Tab = createStackNavigator();
 const Navigator = () => {
   const auth = useAuth();
 
-  // TODO: switch router by loggedIn state
-  console.log("[##] loggedIn", auth.user);
 
   function Unauthenticated() {
     return (
