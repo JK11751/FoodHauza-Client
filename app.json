@@ -2,7 +2,7 @@
   "expo": {
     "name": "FoodHauza",
     "slug": "FoodHauza",
-     "scheme": "FoodHauza",
+    "scheme": "foodhauza",
     "owner": "gimase",
     "privacy": "public",
     "platforms": [
@@ -19,7 +19,8 @@
       "backgroundColor": "#5AAE7F"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/843795a6-3eed-4ac7-9fd8-68dd940aa61c"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -36,6 +37,15 @@
         "ts",
         "tsx"
       ]
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "843795a6-3eed-4ac7-9fd8-68dd940aa61c"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "android": {}
   }
 }
