@@ -51,23 +51,20 @@ const ChooseAccountType = ({ route, navigation }) => {
     profile_pic: image,
     role: role,
   };
-  // ... to save the user to state.
   const onSubmit = async () => {
-    auth
-      .signup(userData)
-      .then((response) => {
-        if (response.role === "donor") {
-          navigation.navigate("DonorDashboard");
-        } else if (response.role === "recepient") {
-          navigation.navigate("RecepientDashboard");
-        } else {
-          setError("not yet authenticated");
-        }
-      })
-      .catch((err) => {
-        setError(err.message);
-        console.log("upload " + err.message);
+    try {
+      const response = await auth.signup(userData);
+      navigation.navigate("VerifyOTP", {
+        userId: response._id,
+        email: response.email,
       });
+      toast.show({
+        title: "Check your email for the OTP",
+        placement: "top",
+      });
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   useEffect(() => {

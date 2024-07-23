@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -27,17 +27,17 @@ import {
   useToast,
 } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from 'expo-image-picker';
 import { images } from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
-const screenHeight = Dimensions.get('window').height
+const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   img: {
     height: "100%",
@@ -46,10 +46,71 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
 const Profile = ({ navigation }) => {
-  const auth = useAuth()
-  const toastRef = useRef()
-  const toast = useToast()
+  const auth = useAuth();
+  const toast = useToast();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: auth.user.name,
+    email: auth.user.email,
+    profile_pic: auth.user.profile_pic,
+  });
+
+  useEffect(() => {
+    if (!auth.user) {
+      navigation.navigate("Unauthenticated");
+    }
+  }, [auth.user, navigation]);
+
+  if (!auth.user) {
+    return null;
+  }
+
+  const handleInputChange = (name, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      await auth.updateProfile(auth.user._id, formData);
+      toast.show({
+        title: "Profile updated successfully",
+        placement: "top",
+      });
+      setIsEditing(false);
+    } catch (error) {
+      toast.show({
+        title: "Error updating profile",
+        description: error.message,
+        placement: "top",
+      });
+    }
+  };
+
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      handleInputChange("profile_pic", result.assets[0].uri);
+    }
+  };
+
   return (
     <ScrollView>
       <SafeAreaView style={styles.root}>
@@ -105,41 +166,40 @@ const Profile = ({ navigation }) => {
                   w="135px"
                   h="135px"
                   bg="green.500"
-                  size="2xl"y
-                  source={{ uri: auth.user.profile_pic }}
-                  
+                  size="2xl"
+                  source={{ uri: formData.profile_pic }}
                 />
               </Circle>
-              <Box
-                py={1}
-                mt={-2}
-                px={2}
-                borderRadius={10}
-                backgroundColor={colors.background_color}
-              >
-                <Ionicons
-                  border="2px"
-                  color="#5AAE7F"
-                  name="md-camera"
-                  size={24}
-                />
-              </Box>
+              <Pressable onPress={pickImage}>
+                <Box
+                  py={1}
+                  mt={-2}
+                  px={2}
+                  borderRadius={10}
+                  backgroundColor={colors.background_color}
+                >
+                  <Ionicons
+                    border="2px"
+                    color="#5AAE7F"
+                    name="md-camera"
+                    size={24}
+                  />
+                </Box>
+              </Pressable>
             </VStack>
           </Box>
           <Box>
             <VStack paddingBottom={5} alignItems="center">
               <Heading
-                // width="183px"
                 height="23px"
                 fontStyle="normal"
                 fontWeight="700"
-                font-size="20px"
+                fontSize="20px"
                 lineHeight="23px"
               >
-                {auth.user.name}
+                {formData.name}
               </Heading>
               <Text
-                // width="159px"
                 height="20px"
                 fontStyle="normal"
                 fontWeight="500"
@@ -147,12 +207,11 @@ const Profile = ({ navigation }) => {
                 lineHeight="20px"
                 color="#979494"
               >
-                {auth.user.email}
+                {formData.email}
               </Text>
             </VStack>
             <Heading
               px={30}
-              // width="179px"
               height="23px"
               fontStyle="normal"
               fontWeight="700"
@@ -164,14 +223,13 @@ const Profile = ({ navigation }) => {
             </Heading>
             <Box w={screenWidth} px={30}>
               <FormControl paddingTop={5} pb={3}>
-                <FormControl.Label>Full Name</FormControl.Label>
+                <FormControl.Label>Username</FormControl.Label>
                 <Input
                   w={{
                     base: "100%",
                     md: "25%",
                   }}
                   borderRadius={"40px"}
-                  type="email"
                   bg="#F4F4F4"
                   InputLeftElement={
                     <Icon
@@ -182,14 +240,18 @@ const Profile = ({ navigation }) => {
                     />
                   }
                   placeholder="Catherine Ndereba"
-                  value={auth.user.name}
+                  value={formData.name}
+                  isDisabled={!isEditing}
+                  onChangeText={(value) => handleInputChange("name", value)}
                   InputRightElement={
-                    <Icon
-                      as={<AntDesign name="edit" />}
-                      size={5}
-                      mr="2"
-                      color="#000000"
-                    />
+                    isEditing && (
+                      <Icon
+                        as={<AntDesign name="edit" />}
+                        size={5}
+                        mr="2"
+                        color="#000000"
+                      />
+                    )
                   }
                 />
               </FormControl>
@@ -204,7 +266,6 @@ const Profile = ({ navigation }) => {
                   }}
                   bg="#F4F4F4"
                   borderRadius={"40px"}
-                  type="password"
                   InputLeftElement={
                     <Icon
                       as={<MaterialIcons name="email" />}
@@ -214,14 +275,42 @@ const Profile = ({ navigation }) => {
                     />
                   }
                   placeholder="catherine@gmail.com"
-                  value={auth.user.email}
+                  value={formData.email}
+                  isDisabled={!isEditing}
+                  onChangeText={(value) => handleInputChange("email", value)}
                   InputRightElement={
-                    <Icon
-                      as={<AntDesign name="edit" />}
-                      size={5}
-                      mr="2"
-                      color="#000000"
-                    />
+                    isEditing && (
+                      <Icon
+                        as={<AntDesign name="edit" />}
+                        size={5}
+                        mr="2"
+                        color="#000000"
+                      />
+                    )
+                  }
+                />
+              </FormControl>
+              <FormControl paddingTop={5} pb={3}>
+                <FormControl.Label>Profile Picture URL</FormControl.Label>
+                <Input
+                  w={{
+                    base: "100%",
+                    md: "25%",
+                  }}
+                  borderRadius={"40px"}
+                  bg="#F4F4F4"
+                  value={formData.profile_pic}
+                  isDisabled={!isEditing}
+                  onChangeText={(value) => handleInputChange("profile_pic", value)}
+                  InputRightElement={
+                    isEditing && (
+                      <Icon
+                        as={<AntDesign name="edit" />}
+                        size={5}
+                        mr="2"
+                        color="#000000"
+                      />
+                    )
                   }
                 />
               </FormControl>
@@ -231,11 +320,9 @@ const Profile = ({ navigation }) => {
                 h="40px"
                 bg={colors.primary_color}
                 position="relative"
-                onPress={() => {
-                  navigation.navigate("Home");
-                }}
+                onPress={isEditing ? handleUpdateProfile : () => setIsEditing(true)}
               >
-                Update Profile Information
+                {isEditing ? "Save Changes" : "Edit Profile"}
               </Button>
               <Box paddingTop={5}>
                 <Text
@@ -257,14 +344,12 @@ const Profile = ({ navigation }) => {
                       height="23px"
                       fontStyle="normal"
                       fontWeight="500"
-                      font-size="20px"
+                      fontSize="20px"
                       lineHeight="23px"
                     >
                       Turn on Location
                     </Text>
-                    <Text>
-                      This will help the riders find your donation quicker
-                    </Text>
+                    <Text>This will help the riders find your donation quicker</Text>
                   </VStack>
                   <Switch size="sm" />
                 </HStack>
@@ -283,13 +368,12 @@ const Profile = ({ navigation }) => {
                 </Heading>
                 <Pressable
                   onPress={() => {
-                  navigation.navigate("SignIn");
-                  auth.signout();
-                  toastRef.current = toast.show({
-                  title: "logout successful",
-                  placement: "top",
-                   });
-                   }}
+                    auth.signout();
+                    toast.show({
+                      title: "Logout successful",
+                      placement: "top",
+                    });
+                  }}
                 >
                   <HStack space={5}>
                     <MaterialIcons name="logout" size={24} color="black" />
@@ -302,6 +386,7 @@ const Profile = ({ navigation }) => {
         </Box>
       </SafeAreaView>
     </ScrollView>
-  );};
+  );
+};
 
 export default Profile;

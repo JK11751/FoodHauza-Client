@@ -24,6 +24,7 @@ import DonorDonationDetails from "../screens/DonationDetails/DonorDonationDetail
 import DonationTipsScreen from "../screens/DonationTips/DonationTipsScreen.js";
 import FoodBankScreen from "../screens/DonationTips/FoodBankScreen.js";
 import CommunityDonationsScreen from "../screens/DonationTips/CommunityDonationsScreen.js";
+import VerifyOTP from "../screens/Account/VerifyOTP.js";
 
 const Stack = createStackNavigator();
 const Tab = createStackNavigator();
@@ -44,6 +45,7 @@ const Navigator = () => {
         <Tab.Screen name="SignUp" component={SignUp} />
         <Tab.Screen name="SignIn" component={SignIn} />
         <Tab.Screen name="ChooseAccountType" component={ChooseAccountType} />
+        <Tab.Screen name="VerifyOTP" component={VerifyOTP}/> 
       </Tab.Navigator>
     );
   }

@@ -150,19 +150,26 @@ const RecepientDash = ({navigation}) => {
               borderBottomLeftRadius="20px"
               borderBottomRightRadius="20px"
             >
-              <Box>
-                <Text style={styles.title}>Hi, {auth.user.name}</Text>
-                <Text style={styles.title_desc}>
-                  Check out recent food donations here
-                </Text>
+               <Box>
+                {auth.user ? (
+                  <>
+                    <Text style={styles.title}>Hi, {auth.user.name}</Text>
+                    <Text style={styles.title_desc}>
+                      What would you like to donate today?
+                    </Text>
+                  </>
+                ) : (
+                  <Text style={styles.title}>Hi, Guest</Text>
+                )}
               </Box>
+              {auth.user && auth.user.profile_pic && (
                 <Image
                   source={{ uri: auth.user.profile_pic }}
                   alt="Profile Picture"
                   size="lg"
                   borderRadius="full"
                 />
-            
+              )}
             </Flex>
             <Box
               px="30px"
