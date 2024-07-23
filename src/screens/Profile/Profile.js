@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Dimensions,
-  StyleSheet,
-  Switch,
-} from "react-native";
+import { Dimensions, StyleSheet, Switch } from "react-native";
 import { MaterialIcons, AntDesign, Entypo } from "@expo/vector-icons";
 import { colors } from "theme";
 import {
@@ -28,6 +24,7 @@ import {
 } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { images } from "../../theme";
 import { useAuth } from "../../hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -50,18 +47,30 @@ const styles = StyleSheet.create({
 const Profile = ({ navigation }) => {
   const auth = useAuth();
   const toast = useToast();
+  const [locationEnabled, setLocationEnabled] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: auth.user.name,
-    email: auth.user.email,
-    profile_pic: auth.user.profile_pic,
+    name: auth.user?.name || '',
+    email: auth.user?.email || '',
+    profile_pic: auth.user?.profile_pic || '',
   });
 
   useEffect(() => {
     if (!auth.user) {
+      console.log('User is not authenticated, redirecting to Unauthenticated screen');
       navigation.navigate("Unauthenticated");
     }
   }, [auth.user, navigation]);
+
+  useEffect(() => {
+    if (auth.user) {
+      setFormData({
+        name: auth.user.name,
+        email: auth.user.email,
+        profile_pic: auth.user.profile_pic,
+      });
+    }
+  }, [auth.user]);
 
   if (!auth.user) {
     return null;
@@ -108,6 +117,31 @@ const Profile = ({ navigation }) => {
 
     if (!result.canceled) {
       handleInputChange("profile_pic", result.assets[0].uri);
+    }
+  };
+
+  const enableLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission to access location was denied');
+      return;
+    }
+
+    const location = await Location.getCurrentPositionAsync({});
+    console.log(location);
+
+    // You can now save the location to the user's profile if needed
+    toast.show({
+      title: "Location enabled",
+      description: `Latitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`,
+      placement: "top",
+    });
+  };
+
+  const handleLocationToggle = (value) => {
+    setLocationEnabled(value);
+    if (value) {
+      enableLocation();
     }
   };
 
@@ -347,11 +381,11 @@ const Profile = ({ navigation }) => {
                       fontSize="20px"
                       lineHeight="23px"
                     >
-                      Turn on Location
+                     Turn on Location
                     </Text>
                     <Text>This will help the riders find your donation quicker</Text>
                   </VStack>
-                  <Switch size="sm" />
+                  <Switch size="sm" value={locationEnabled} onValueChange={handleLocationToggle} />
                 </HStack>
               </Box>
               <VStack space={2} mb={10}>
