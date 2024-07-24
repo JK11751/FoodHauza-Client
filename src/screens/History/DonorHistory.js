@@ -38,7 +38,7 @@ const DonorHistory = ({navigation}) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${BASE_API_URL}/donations?user_id=${auth.user._id}`,
+        `${BASE_API_URL}/donations/user/${auth.user._id}`,
         config
       );
       if (response.data) {

@@ -2,9 +2,9 @@ import { Dimensions, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { Box, ChevronLeftIcon, Text,HStack, Pressable, Spacer, ThreeDotsIcon, ScrollView } from 'native-base';
 import { colors } from '../../theme';
-import NotificationItem from '../../components/NotificationItem';
+import RecepientNotificationItem from '../../components/NotificationItem/RecepientNotificationItem';
 
-const Notifications = ({navigation}) => {
+const RecepientNotifications = ({navigation}) => {
     const screenWidth = Dimensions.get("window").width;
   return (
     <View>
@@ -40,12 +40,12 @@ const Notifications = ({navigation}) => {
       </Box>
       <ScrollView p={"30px"}>
       <Text>Today</Text>
-        <NotificationItem />
+        <RecepientNotificationItem />
       </ScrollView>
     </View>
   );
 }
 
-export default Notifications
+export default RecepientNotifications
 
 const styles = StyleSheet.create({})

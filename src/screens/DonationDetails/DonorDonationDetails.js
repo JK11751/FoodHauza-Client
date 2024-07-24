@@ -185,11 +185,11 @@ const DonationDetails = ({ route, navigation }) => {
                       ml={-1}
                       mt={-0.5}
                     >
-                      You have made{" "}
+                      This donation has{" "}
                       <Text fontSize="md" color="black" fontWeight="bold">
                         {requestDetails.foods.length}
                       </Text>{" "}
-                      donation{requestDetails.foods.length > 1 ? "s" : ""}
+                      food{requestDetails.foods.length > 1 ? "s" : ""}
                     </Text>
                     <Stack bg="gray.50" space={4}>
                       {requestDetails.foods.map((f) => (

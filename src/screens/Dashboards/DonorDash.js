@@ -1,8 +1,10 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable object-curly-newline */
-import React from "react";
+import React  from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import axios from "axios";
 import { StyleSheet, StatusBar, Text } from "react-native";
 // import Button from 'components/Button'
 import { colors } from "theme";
@@ -11,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../theme";
 import HomeCard from "../../components/HomeCard";
 import { useAuth } from "../../hooks/useAuth";
+import { BASE_API_URL } from "../../utils/api";
 
 const HomeLinks = [
   {
@@ -62,6 +65,19 @@ const styles = StyleSheet.create({
 
 const DonorDash = ({ navigation }) => {
   const auth = useAuth();
+  const [donationCount, setDonationCount] = useState(0);
+
+  useEffect(() => {
+    if (auth.user) {
+      axios.get(`${BASE_API_URL}/donations/user/${auth.user._id}`)
+        .then(response => {
+          setDonationCount(response.data.length);
+        })
+        .catch(error => {
+          console.error("Error fetching donation count:", error);
+        });
+    }
+  }, [auth.user]);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -116,7 +132,7 @@ const DonorDash = ({ navigation }) => {
               <Image source={images.stats} alt="donation image" />
               <Box ml="15px">
                 <Text style={styles.meals}>
-                  You’ve provided <Text style={styles.meals_txt}>17 meals</Text>{" "}
+                  You’ve provided <Text style={styles.meals_txt}>{donationCount} meals</Text>{" "}
                   worth of food this year
                 </Text>
                 <Text

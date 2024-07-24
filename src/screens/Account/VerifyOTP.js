@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
     marginRight: 10,
+    marginLeft: 10,
   },
   otpInput: {
     textAlign: "center",

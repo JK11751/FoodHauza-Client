@@ -20,7 +20,7 @@ const BottomNav = ({ navigation }) => {
   }
 
   const navigateToSecondScreen = () => {
-    navigation.navigate('Notifications')
+    navigation.navigate('DonorNotifications')
   }
 
   const navigateToThirdScreen = () => {

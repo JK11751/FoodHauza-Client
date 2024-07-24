@@ -4,7 +4,7 @@ import { Badge, Box, Flex, HStack, Text, VStack } from 'native-base'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { colors } from '../../theme'
 
-const NotificationItem = () => {
+const RecepientNotificationItem = () => {
   return (
     <View>
       <Box h="160px" bg="white" shadow={"30px"} mt="3" p={5} borderRadius={"5px"}>
@@ -49,6 +49,6 @@ const NotificationItem = () => {
   );
 }
 
-export default NotificationItem
+export default RecepientNotificationItem
 
 const styles = StyleSheet.create({})

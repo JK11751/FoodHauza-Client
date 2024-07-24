@@ -46,6 +46,8 @@
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
-    "android": {}
+    "android": {
+      "package": "com.gimase.FoodHauza"
+    }
   }
 }

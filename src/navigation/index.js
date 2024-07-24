@@ -11,7 +11,7 @@ import DonationPackCards from "../screens/DonationPack/DonationPackCards";
 import { DonorTabNavigator } from "./Tabs/DonorTabNavigator";
 import { DonationPageNavigator } from "./Tabs/DonationPageNavigator";
 import Profile from "../screens/Profile";
-import Notifications from "../screens/Notifications";
+import DonorNotifications from "../screens/Notifications/DonorNotifications";
 import { useAuth } from "../hooks/useAuth";
 import { RecepientTabNavigator } from "./Tabs/RecepientTabNavigator";
 import DonorHistory from "../screens/History/DonorHistory";
@@ -25,6 +25,7 @@ import DonationTipsScreen from "../screens/DonationTips/DonationTipsScreen.js";
 import FoodBankScreen from "../screens/DonationTips/FoodBankScreen.js";
 import CommunityDonationsScreen from "../screens/DonationTips/CommunityDonationsScreen.js";
 import VerifyOTP from "../screens/Account/VerifyOTP.js";
+import RecepientNotifications from "../screens/Notifications/RecepientNotifications.js";
 
 const Stack = createStackNavigator();
 const Tab = createStackNavigator();
@@ -85,8 +86,13 @@ const Navigator = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="Notifications"
-              component={Notifications}
+              name="DonorNotifications"
+              component={DonorNotifications}
+              options={{ headerShown: false }}
+            />
+             <Stack.Screen
+              name="RecepientNotifications"
+              component={RecepientNotifications}
               options={{ headerShown: false }}
             />
             <Stack.Screen
