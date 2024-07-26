@@ -57,7 +57,7 @@ const Profile = ({ navigation }) => {
 
   useEffect(() => {
     if (!auth.user) {
-      console.log('User is not authenticated, redirecting to Unauthenticated screen');
+    
       navigation.navigate("Unauthenticated");
     }
   }, [auth.user, navigation]);

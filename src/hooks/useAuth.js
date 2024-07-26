@@ -106,6 +106,27 @@ function useProvideAuth() {
     setUser(null);
     return true;
   };
+
+
+  const deleteUser = async (userId) => {
+    try {
+      const response = await axios.delete(`${BASE_API_URL}/user/${userId}`, {
+        headers: {
+          // Optionally include Authorization header if needed
+          // Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      if (response.status === 200) {
+        setUser(null); // Optionally clear user state on successful deletion
+        return true; // Return true if user was deleted successfully
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+  };
+  
   
   return {
     user,
@@ -115,5 +136,6 @@ function useProvideAuth() {
     resendOTP,
     updateProfile,
     signout,
+    deleteUser,
   };
 }

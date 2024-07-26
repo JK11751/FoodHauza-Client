@@ -8,13 +8,21 @@ import { BASE_API_URL } from '../../utils/api';
 import { useAuth } from '../../hooks/useAuth';
 import axios from 'axios';
 
+
 const DonorNotifications = ({ navigation }) => {
     const screenWidth = Dimensions.get("window").width;
     const { user } = useAuth(); 
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showPending, setShowPending] = useState(false);
-    const donorId = user._id;
+
+    const donorId = user?._id;
+
+    useEffect(() => {
+        if (donorId) {
+            fetchRequests();
+        }
+    }, [donorId]);
 
     const fetchRequests = async () => {
         try {
@@ -29,16 +37,13 @@ const DonorNotifications = ({ navigation }) => {
         }
     };
 
-    useEffect(() => {
-        fetchRequests();
-    }, [donorId]);
-
     const handleUpdate = () => {
         fetchRequests(); // Re-fetch requests to update the list
     };
 
     const pendingRequests = requests.filter(request => !request.accepted);
     const pendingRequestsCount = pendingRequests.length;
+
 
     return (
         <View style={styles.container}>
