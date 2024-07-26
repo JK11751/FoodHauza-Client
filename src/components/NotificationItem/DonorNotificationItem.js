@@ -1,18 +1,45 @@
-import { StyleSheet, View, TouchableOpacity, ImageBackground } from "react-native";
-import React, { useState } from "react";
-import { Badge, Box, Flex, HStack, Text, VStack, Modal, Button, FormControl, Input} from "native-base";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  Badge,
+  Box,
+  Flex,
+  HStack,
+  Text,
+  VStack,
+  Modal,
+  Button,
+  FormControl,
+  Input,
+} from "native-base";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { colors } from "../../theme";
 import axios from "axios";
 import { BASE_API_URL } from "../../utils/api";
 import images from "../../theme/images";
 
 const DonorNotificationItem = ({ request, onUpdate }) => {
-  const { requested_date, delivered_date, requestor, accepted } = request;
+  const route = useRoute();
+  //const navigation = useNavigation();
+  //const { selectedLocation } = route.params || {};
+  const { requested_date, requestor } = request;
   const [modalVisible, setModalVisible] = useState(false);
-  const [pickupDate, setPickupDate] = useState("");
-  const [pickupTime, setPickupTime] = useState("");
+  const [pickupDate, setPickupDate] = useState(new Date());
+  const [pickupTime, setPickupTime] = useState(new Date());
   const [pickupLocation, setPickupLocation] = useState("");
+  const [accepted, setAccepted] = useState(request.accepted);
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+
 
   const handleAccept = async () => {
     try {
@@ -21,6 +48,7 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
         pickupTime,
         pickupLocation,
       });
+      setAccepted(true);
       onUpdate();
     } catch (error) {
       console.error("Failed to accept the request", error);
@@ -51,6 +79,21 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
     }
   };
 
+
+  const onDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setPickupDate(selectedDate);
+    }
+  };
+
+  const onTimeChange = (event, selectedTime) => {
+    setShowTimePicker(false);
+    if (selectedTime) {
+      setPickupTime(selectedTime);
+    }
+  };
+
   return (
     <View>
       <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -77,9 +120,9 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
               size="md"
               h="30px"
               borderRadius="5px"
-              colorScheme={"green"}
+              colorScheme={accepted ? "blue" : "green"}
             >
-              Pending
+              {accepted ? "Accepted" : "Pending"}
             </Badge>
           </HStack>
           <VStack mt={2} space={2}>
@@ -120,61 +163,64 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
       </TouchableOpacity>
 
       <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
-        <Modal.Content maxWidth="400px" >
+        <Modal.Content maxWidth="400px">
           <ImageBackground style={styles.img} source={images.background_img}>
-          <Modal.CloseButton colorScheme={colors.primary_color} bgColor={'white'} />
-          <Modal.Header bgColor={colors.primary_color}  borderBottomRadius={25}>Manage Request</Modal.Header>
-          <Modal.Body>
-            <FormControl>
-              <FormControl.Label>Pickup Date</FormControl.Label>
-              <Input
-              bgColor={"white"}
-                placeholder="YYYY-MM-DD"
-                value={pickupDate}
-                onChangeText={setPickupDate}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormControl.Label>Pickup Time</FormControl.Label>
-              <Input
-              bgColor={"white"}
-                placeholder="HH:MM"
-                value={pickupTime}
-                onChangeText={setPickupTime}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormControl.Label>Pickup Location</FormControl.Label>
-              <Input
-              bgColor={"white"}
-                placeholder="Enter location"
-                value={pickupLocation}
-                onChangeText={setPickupLocation}
-              />
-            </FormControl>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button
-                colorScheme="blue"
-                onPress={handleAccept}
-              >
-                Accept
+            <Modal.CloseButton bgColor={"white"} />
+           
+            <Modal.Body>
+              <FormControl isDisabled={accepted}>
+                <FormControl.Label fontSize={20}>Pickup Date :</FormControl.Label>
+                <Button onPress={() => setShowDatePicker(true)} disabled={accepted}>
+                  {pickupDate ? pickupDate.toLocaleDateString() : "Select Date"}
+                </Button>
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={pickupDate}
+                    mode="date"
+                    display="default"
+                    onChange={onDateChange}
+                  />
+                )}
+              </FormControl>
+              <FormControl mt={2} isDisabled={accepted}>
+                <FormControl.Label fontSize={20}>Pickup Time :</FormControl.Label>
+                <Button onPress={() => setShowTimePicker(true)} disabled={accepted}>
+                  {pickupTime ? pickupTime.toLocaleTimeString() : "Select Time"}
+                </Button>
+                {showTimePicker && (
+                  <DateTimePicker
+                    value={pickupTime}
+                    mode="time"
+                    display="default"
+                    onChange={onTimeChange}
+                  />
+                )}
+              </FormControl>
+              <Text mt="2">Selected Location: {pickupLocation}</Text>
+              <Button  onPress={""} fontSize={20} isDisabled={accepted}>
+                Pickup Location
               </Button>
-              <Button
-                colorScheme="red"
-                onPress={handleReject}
-              >
-                Reject
-              </Button>
-              <Button
-                colorScheme="gray"
-                onPress={handleDelete}
-              >
-                Delete
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
+             
+                
+              
+                <Text mt="2" color="gray.500">
+                  No location selected
+                </Text>
+              
+            </Modal.Body>
+            <Modal.Footer bgColor={colors.secondary_color} >
+              <Button.Group justifyContent={"center"} width={"full"}  space={2}>
+                <Button width={90} ml={4} colorScheme="green" onPress={handleAccept} isDisabled={accepted}>
+                  Accept
+                </Button>
+                <Button width={90} colorScheme="gray" onPress={handleReject} isDisabled={accepted}>
+                  Reject
+                </Button>
+                <Button width={90} mr={4} colorScheme="red" onPress={handleDelete}>
+                  Delete
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
           </ImageBackground>
         </Modal.Content>
       </Modal>
@@ -186,8 +232,8 @@ export default DonorNotificationItem;
 
 const styles = StyleSheet.create({
   img: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

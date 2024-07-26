@@ -101,7 +101,7 @@ const DonorHistory = ({navigation}) => {
             </Pressable>
             <Spacer />
             <Text color="#FFFFFF" fontSize="20px" fontWeight="700">
-              History
+              My Donation History
             </Text>
             <Spacer />
             <ThreeDotsIcon paddingRight="50px" color="white" />

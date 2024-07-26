@@ -97,7 +97,6 @@ const DonationDetails = ({ route, navigation }) => {
     delivered: false,
     cancelled: false,
     requested_date: today.toISOString(),
-    delivered_date: today.toISOString(),
   };
 
   const createDonationRequest = async () => {

@@ -16,11 +16,19 @@ import {
 } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import { colors } from "../../theme";
-import { MaterialIcons, FontAwesome5, AntDesign  } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import { images } from "../../theme";
 
 const DonationTipsScreen = () => {
   const navigation = useNavigation();
+
+  const tips = [
+    { id: "tip1", icon: MaterialIcons, iconName: "kitchen", text: "Donate non-perishable items." },
+    { id: "tip2", icon: FontAwesome5, iconName: "calendar-check", text: "Check expiration dates." },
+    { id: "tip3", icon: AntDesign, iconName: "Safety", text: "Consider donating healthy, nutritious foods." },
+    { id: "tip4", icon: MaterialIcons, iconName: "no-food", text: "Avoid glass containers." },
+    { id: "tip5", icon: FontAwesome5, iconName: "concierge-bell", text: "Think about items that don't require much preparation." },
+  ];
 
   return (
     <View flex={1} bg={colors.background}>
@@ -54,7 +62,7 @@ const DonationTipsScreen = () => {
       <ScrollView style={styles.container}>
         <Box p="4" backgroundColor="#fff" borderRadius="10px" shadow="2" mb="4">
           <Image
-          source={images.donation_img}
+            source={images.donation_img}
             alt="Donation Tips Banner"
             borderRadius="10px"
             mb="4"
@@ -68,40 +76,17 @@ const DonationTipsScreen = () => {
             Follow these tips to ensure your donations are useful and safe.
           </Text>
           <Divider my="2" />
-          <HStack alignItems="center">
-            <Icon as={MaterialIcons} name="kitchen" size="6" color={colors.primary_color} mr="2" />
-            <Text style={styles.content}>
-              Donate non-perishable items.
-            </Text>
-          </HStack>
-          <Divider my="2" />
-          <HStack alignItems="center">
-            <Icon as={FontAwesome5} name="calendar-check" size="6" color={colors.primary_color} mr="2" />
-            <Text style={styles.content}>
-              Check expiration dates.
-            </Text>
-          </HStack>
-          <Divider my="2" />
-          <HStack alignItems="center">
-            <Icon as={AntDesign } name="Safety" size="6" color={colors.primary_color} mr="2" />
-            <Text style={styles.content}>
-              Consider donating healthy, nutritious foods.
-            </Text>
-          </HStack>
-          <Divider my="2" />
-          <HStack alignItems="center">
-            <Icon as={MaterialIcons} name="no-food" size="6" color={colors.primary_color} mr="2" />
-            <Text style={styles.content}>
-              Avoid glass containers.
-            </Text>
-          </HStack>
-          <Divider my="2" />
-          <HStack alignItems="center">
-            <Icon as={FontAwesome5} name="concierge-bell" size="6" color={colors.primary_color} mr="2" />
-            <Text style={styles.content}>
-              Think about items that don't require much preparation.
-            </Text>
-          </HStack>
+          {tips.map((tip) => (
+            <React.Fragment key={tip.id}>
+              <HStack alignItems="center">
+                <Icon as={tip.icon} name={tip.iconName} size="6" color={colors.primary_color} mr="2" />
+                <Text style={styles.content}>
+                  {tip.text}
+                </Text>
+              </HStack>
+              <Divider my="2" />
+            </React.Fragment>
+          ))}
         </Box>
       </ScrollView>
     </View>

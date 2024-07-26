@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Dimensions, ImageBackground, View, StyleSheet } from 'react-native'
-import { colors } from 'theme'
+import React, { useState, useRef, useEffect } from 'react';
+import { Dimensions, ImageBackground, View, StyleSheet } from 'react-native';
+import { colors } from 'theme';
 import validator from "validator";
 import {
   Box,
@@ -13,13 +13,13 @@ import {
   Button,
   HStack,
   useToast,
-} from 'native-base'
-import images from '../../theme/images'
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
-import { useAuth } from '../../hooks/useAuth'
+} from 'native-base';
+import images from '../../theme/images';
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { useAuth } from '../../hooks/useAuth';
 
 // const screenHeight = Dimensions.get('window').height
-const screenWidth = Dimensions.get('window').width
+const screenWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -35,63 +35,67 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-})
+});
 const SignIn = ({ navigation }) => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-   const [error, setError] = useState([]);
-   const toast = useToast();
-   const toastRef = useRef();
-   const showPassword = () => setShow(!show);
-   const auth  = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const toast = useToast();
+  const toastRef = useRef();
+  const showPassword = () => setShow(!show);
+  const auth = useAuth();
 
-   const onSubmit = async () => {
-     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-     if (validator.isEmpty(email)) {
-       setError("Email is empty");
-       return false;
-     } else if (!emailRegex.test(email.trim())) {
-       setError("Email address is invalid");
-       return false;
-     } else if (validator.isEmpty(password)) {
-       setError("Password is empty");
-       return false;
-     } else {
-       // ... to save the user to state.
-       const userData = {
-         "email": email,
-         "password": password,
-       };
-         auth
-           .signin(userData)
-           .then((response) => {
-             if (response.role == "donor") {
-               navigation.navigate("DonorDashboard");
-             } else if (response.role == "recepient") {
-               navigation.navigate("RecepientDashboard");
-             } else {
-               setError("not yet authenticated");
-             }
-           })
-           .catch((err) => {
-             setError(err.message);
-             console.log("upload " + err.message);
-           });
-       };
-   };
+  const onSubmit = async () => {
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    if (validator.isEmpty(email)) {
+      setError("Email is empty");
+      return false;
+    } else if (!emailRegex.test(email.trim())) {
+      setError("Email address is invalid");
+      return false;
+    } else if (validator.isEmpty(password)) {
+      setError("Password is empty");
+      return false;
+    } else {
+      // ... to save the user to state.
+      const userData = {
+        "email": email,
+        "password": password,
+      };
+      auth
+        .signin(userData)
+        .then((response) => {
+          if (response.role == "donor") {
+            navigation.navigate("DonorDashboard");
+          } else if (response.role == "recepient") {
+            navigation.navigate("RecepientDashboard");
+          } else {
+            setError("Login Failed");
+          }
+        })
+        .catch((err) => {
+          setError(err.message);
+          console.log("upload " + err.message);
+        });
+    };
+  };
 
-     useEffect(() => {
-       if (error) {
-         showMessage(error);
-       }
-     }, [error]);
+  useEffect(() => {
+    if (error) {
+      showMessage(error);
+    }
+  }, [error]);
 
-     const showMessage = (errMessage) => {
-       toastRef.current = toast.show({
-         title: errMessage,
-         placement: "top",
-       });
-     };
+  const showMessage = (errMessage) => {
+    if (toastRef.current) {
+      toast.close(toastRef.current);
+    }
+    toastRef.current = toast.show({
+      title: errMessage,
+      placement: "top",
+    });
+  };
+
   return (
     <View style={styles.root}>
       <ImageBackground
@@ -200,5 +204,5 @@ const SignIn = ({ navigation }) => {
       </ImageBackground>
     </View>
   );
-}
-export default SignIn
+};
+export default SignIn;

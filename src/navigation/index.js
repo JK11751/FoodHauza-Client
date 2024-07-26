@@ -26,13 +26,13 @@ import FoodBankScreen from "../screens/DonationTips/FoodBankScreen.js";
 import CommunityDonationsScreen from "../screens/DonationTips/CommunityDonationsScreen.js";
 import VerifyOTP from "../screens/Account/VerifyOTP.js";
 import RecepientNotifications from "../screens/Notifications/RecepientNotifications.js";
+import PickUpLocation from "../screens/SelectLocation/PickUpLocation.js";
 
 const Stack = createStackNavigator();
 const Tab = createStackNavigator();
 
 const Navigator = () => {
   const auth = useAuth();
-
 
   function Unauthenticated() {
     return (
@@ -44,7 +44,7 @@ const Navigator = () => {
         <Tab.Screen name="SignUp" component={SignUp} />
         <Tab.Screen name="SignIn" component={SignIn} />
         <Tab.Screen name="ChooseAccountType" component={ChooseAccountType} />
-        <Tab.Screen name="VerifyOTP" component={VerifyOTP}/> 
+        <Tab.Screen name="VerifyOTP" component={VerifyOTP} />
       </Tab.Navigator>
     );
   }
@@ -70,6 +70,12 @@ const Navigator = () => {
               component={SelectLocation}
               options={{ headerShown: false }}
             />
+
+            <Stack.Screen
+              name="Location"
+              component={PickUpLocation}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="DonationPackStart"
               component={DonationPageNavigator}
@@ -90,7 +96,7 @@ const Navigator = () => {
               component={DonorNotifications}
               options={{ headerShown: false }}
             />
-             <Stack.Screen
+            <Stack.Screen
               name="RecepientNotifications"
               component={RecepientNotifications}
               options={{ headerShown: false }}
