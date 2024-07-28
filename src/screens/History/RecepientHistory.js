@@ -59,16 +59,18 @@ const RecepientHistory = ({ navigation }) => {
 
   const handleFilterDate = (event, date) => {
     setShowDatePicker(false);
-    if (date && date.type !== "dismissed") {
+
+    if (event.type === "set" && date) {
+      // Only update the filterDate if a date was selected
       setFilterDate(date);
     }
   };
 
   const handleDateFilterToggle = () => {
     if (filterDate) {
-      setFilterDate(null); 
+      setFilterDate(null);
     } else {
-      setShowDatePicker(true); 
+      setShowDatePicker(true);
     }
   };
 
@@ -138,7 +140,11 @@ const RecepientHistory = ({ navigation }) => {
           >
             {filterDate ? "Reset Filter" : "Filter by Date"}
           </Button>
-          <Button size="sm" backgroundColor={colors.gray} onPress={clearHistory}>
+          <Button
+            size="sm"
+            backgroundColor={colors.gray}
+            onPress={clearHistory}
+          >
             Clear All
           </Button>
         </HStack>
