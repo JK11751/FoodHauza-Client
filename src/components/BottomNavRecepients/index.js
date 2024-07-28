@@ -26,7 +26,7 @@ const BottomNavRecepient = ({navigation}) => {
   };
 
   const navigateToSecondScreen = () => {
-    navigation.navigate("Notifications");
+    navigation.navigate("RecepientNotifications");
   };
 
   const navigateToThirdScreen = () => {

@@ -218,7 +218,7 @@ const PickUpLocation = ({ navigation }) => {
               justifyContent="center"
               backgroundColor="white"
             >
-              <Text fontWeight="bold" fontSize="20px" te>
+              <Text fontWeight="bold" fontSize="20px">
                 Select pick-up Location
               </Text>
               <Box w={screenWidth} px={30} py={1}>

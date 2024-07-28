@@ -11,6 +11,7 @@ import {
   Box,
   HStack,
   Text,
+  Badge,
   VStack,
   Image,
   ThreeDotsIcon,
@@ -205,13 +206,13 @@ const DonationItemRecepient = ({ request }) => {
                     <Text color="black" fontWeight="400">
                       Accepted:
                     </Text>
-                    <Text
-                      color="coolGray.600"
-                      _dark={{ color: "warmGray.200" }}
-                      fontWeight="400"
+                    <Badge
+                    borderRadius={15}
+                      colorScheme={details.accepted ? "green" : "red"}
+                      variant="solid"
                     >
                       {details.accepted ? "Yes" : "No"}
-                    </Text>
+                    </Badge>
                   </HStack>
                   <HStack space={2} alignItems="center">
                     <Text color="black" fontWeight="400">
