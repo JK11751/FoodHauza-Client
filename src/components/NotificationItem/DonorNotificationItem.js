@@ -17,7 +17,7 @@ import {
   FormControl,
   Input,
 } from "native-base";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { colors } from "../../theme";
@@ -27,8 +27,8 @@ import images from "../../theme/images";
 
 const DonorNotificationItem = ({ request, onUpdate }) => {
   const route = useRoute();
-  //const navigation = useNavigation();
-  //const { selectedLocation } = route.params || {};
+  const navigation = useNavigation();
+  const { selectedLocation } = route.params || {};
   const { requested_date, requestor } = request;
   const [modalVisible, setModalVisible] = useState(false);
   const [pickupDate, setPickupDate] = useState(new Date());
@@ -39,7 +39,11 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-
+  useEffect(() => {
+    if (selectedLocation) {
+      setPickupLocation(selectedLocation);
+    }
+  }, [selectedLocation]);
 
   const handleAccept = async () => {
     try {
@@ -78,7 +82,6 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
       setModalVisible(false);
     }
   };
-
 
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
@@ -166,11 +169,16 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
         <Modal.Content maxWidth="400px">
           <ImageBackground style={styles.img} source={images.background_img}>
             <Modal.CloseButton bgColor={"white"} />
-           
+
             <Modal.Body>
               <FormControl isDisabled={accepted}>
-                <FormControl.Label fontSize={20}>Pickup Date :</FormControl.Label>
-                <Button onPress={() => setShowDatePicker(true)} disabled={accepted}>
+                <FormControl.Label fontSize={20}>
+                  Pickup Date :
+                </FormControl.Label>
+                <Button
+                  onPress={() => setShowDatePicker(true)}
+                  disabled={accepted}
+                >
                   {pickupDate ? pickupDate.toLocaleDateString() : "Select Date"}
                 </Button>
                 {showDatePicker && (
@@ -183,8 +191,13 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                 )}
               </FormControl>
               <FormControl mt={2} isDisabled={accepted}>
-                <FormControl.Label fontSize={20}>Pickup Time :</FormControl.Label>
-                <Button onPress={() => setShowTimePicker(true)} disabled={accepted}>
+                <FormControl.Label fontSize={20}>
+                  Pickup Time :
+                </FormControl.Label>
+                <Button
+                  onPress={() => setShowTimePicker(true)}
+                  disabled={accepted}
+                >
                   {pickupTime ? pickupTime.toLocaleTimeString() : "Select Time"}
                 </Button>
                 {showTimePicker && (
@@ -197,26 +210,47 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                 )}
               </FormControl>
               <Text mt="2">Selected Location: {pickupLocation}</Text>
-              <Button  onPress={""} fontSize={20} isDisabled={accepted}>
-                Pickup Location
+              <Button
+                onPress={() => {
+                  navigation.navigate("Location");
+                }}
+                fontSize={20}
+                isDisabled={accepted}
+              >
+                Pickup Point
               </Button>
-             
-                
-              
+
+              {!pickupLocation && (
                 <Text mt="2" color="gray.500">
                   No location selected
                 </Text>
-              
+              )}
             </Modal.Body>
-            <Modal.Footer bgColor={colors.secondary_color} >
-              <Button.Group justifyContent={"center"} width={"full"}  space={2}>
-                <Button width={90} ml={4} colorScheme="green" onPress={handleAccept} isDisabled={accepted}>
+            <Modal.Footer bgColor={colors.secondary_color}>
+              <Button.Group justifyContent={"center"} width={"full"} space={2}>
+                <Button
+                  width={90}
+                  ml={4}
+                  colorScheme="green"
+                  onPress={handleAccept}
+                  isDisabled={accepted || !pickupDate || !pickupTime || !pickupLocation}
+                >
                   Accept
                 </Button>
-                <Button width={90} colorScheme="gray" onPress={handleReject} isDisabled={accepted}>
+                <Button
+                  width={90}
+                  colorScheme="gray"
+                  onPress={handleReject}
+                  isDisabled={accepted}
+                >
                   Reject
                 </Button>
-                <Button width={90} mr={4} colorScheme="red" onPress={handleDelete}>
+                <Button
+                  width={90}
+                  mr={4}
+                  colorScheme="red"
+                  onPress={handleDelete}
+                >
                   Delete
                 </Button>
               </Button.Group>
