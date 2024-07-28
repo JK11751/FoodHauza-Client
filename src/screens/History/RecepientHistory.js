@@ -1,5 +1,5 @@
-import {Dimensions, StyleSheet, View} from "react-native";
-import React from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   ChevronLeftIcon,
@@ -9,22 +9,25 @@ import {
   Spacer,
   ThreeDotsIcon,
   ScrollView,
+  Button,
+  Modal,
 } from "native-base";
-import {colors} from "../../theme";
-import  DonationItemRecepient  from "../../components/DonationItem/DonationItemRecepient";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import DonationItemRecepient from "../../components/DonationItem/DonationItemRecepient";
 import { BASE_API_URL } from "../../utils/api";
 import axios from "axios";
-import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { useEffect } from "react";
 import { RequestsState } from "../../context";
+import { colors } from "../../theme";
 import { SkeletonLoader } from "../../components/GeneralLoading";
 
-const RecepientHistory = ({navigation}) => {
+const RecepientHistory = ({ navigation }) => {
   const screenWidth = Dimensions.get("window").width;
   const auth = useAuth();
-  const {requests, setRequests} = RequestsState();
+  const { requests, setRequests } = RequestsState();
   const [loading, setLoading] = useState(false);
+  const [filterDate, setFilterDate] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const fetchRequests = async () => {
     const token = auth.token ? auth.token : null;
@@ -42,43 +45,60 @@ const RecepientHistory = ({navigation}) => {
         `${BASE_API_URL}/requests?user_id=${auth.user._id}`,
         config
       );
-      if (response.data) {
-        setLoading(false);
-
-        // Success 🎉
-        console.log("response", response);
-        setRequests(response.data);
-      }
+      setLoading(false);
+      setRequests(response.data);
     } catch (error) {
-      // Error 😨
-      if (error.response) {
-        /*
-         * The request was made and the server responded with a
-         * status code that falls out of the range of 2xx
-         */
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        /*
-         * The request was made but no response was received, `error.request`
-         * is an instance of XMLHttpRequest in the browser and an instance
-         * of http.ClientRequest in Node.js
-         */
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request and triggered an Error
-        console.log("Error", error.message);
-      }
-      console.log(error);
+      console.error("Error fetching requests:", error);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchRequests();
   }, []);
+
+  const handleFilterDate = (event, date) => {
+    setShowDatePicker(false);
+    if (date && date.type !== "dismissed") {
+      setFilterDate(date);
+    }
+  };
+
+  const handleDateFilterToggle = () => {
+    if (filterDate) {
+      setFilterDate(null); 
+    } else {
+      setShowDatePicker(true); 
+    }
+  };
+
+  const clearHistory = () => {
+    setRequests([]);
+    setFilterDate(null);
+  };
+
+  const formatDate = (date) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return date.toLocaleDateString(undefined, options);
+  };
+
+  const displayDate = filterDate
+    ? formatDate(new Date(filterDate))
+    : `Today (${formatDate(new Date())})`;
+
+  const isDateInRange = (itemDate) => {
+    if (!filterDate) return true; // No filter applied
+    const requestDate = new Date(itemDate);
+    const selectedDate = new Date(filterDate);
+    return requestDate.toDateString() === selectedDate.toDateString();
+  };
+
+  const filteredRequests = requests?.filter((request) =>
+    isDateInRange(request.createdAt)
+  );
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Box backgroundColor="#FFFFFF">
         <Box
           alignItems="center"
@@ -88,9 +108,6 @@ const RecepientHistory = ({navigation}) => {
           w={screenWidth}
           bg={colors.primary_color}
           position="relative"
-          onPress={() => {
-            navigation.navigate("RecepientDashboard");
-          }}
         >
           <HStack paddingTop="20px" alignItems="center">
             <Pressable
@@ -110,23 +127,47 @@ const RecepientHistory = ({navigation}) => {
         </Box>
       </Box>
       <ScrollView p={"30px"}>
-        <Text>Today</Text>
+        <HStack space={3} alignItems="center" mb="4">
+          <Text fontSize="xl" flex={1}>
+            {displayDate}
+          </Text>
+          <Button
+            size="sm"
+            backgroundColor={filterDate ? colors.gray : colors.primary_color}
+            onPress={handleDateFilterToggle}
+          >
+            {filterDate ? "Reset Filter" : "Filter by Date"}
+          </Button>
+          <Button size="sm" backgroundColor={colors.gray} onPress={clearHistory}>
+            Clear All
+          </Button>
+        </HStack>
         {loading ? (
           <SkeletonLoader />
         ) : (
           <Box>
-            {requests?.length > 0 ? (
+            {filteredRequests?.length > 0 ? (
               <Box>
-              {requests?.map((request) => (
-                <DonationItemRecepient key={request._id} request={request} />
-              ))}
-            </Box>
+                {filteredRequests.map((request) => (
+                  <DonationItemRecepient key={request._id} request={request} />
+                ))}
+              </Box>
             ) : (
-              <Text>No donations requests yet</Text>
+              <Text>No requests on the selected date</Text>
             )}
           </Box>
         )}
       </ScrollView>
+      {showDatePicker && (
+        <Modal isOpen={showDatePicker} onClose={() => setShowDatePicker(false)}>
+          <DateTimePicker
+            value={filterDate || new Date()}
+            mode="date"
+            display="default"
+            onChange={handleFilterDate}
+          />
+        </Modal>
+      )}
     </View>
   );
 };
