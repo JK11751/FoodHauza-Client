@@ -96,7 +96,7 @@ const RecepientDash = ({navigation}) => {
         setLoading(false);
 
         // Success 🎉
-        console.log("response", response);
+       
         setDonations(response.data);
       }
     } catch (error) {

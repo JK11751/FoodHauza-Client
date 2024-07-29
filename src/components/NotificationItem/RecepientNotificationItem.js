@@ -1,20 +1,29 @@
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { Badge, Box, Flex, HStack, Text, VStack } from 'native-base';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-//import { useRoute, useNavigation } from "@react-navigation/native";
-import { colors } from '../../theme';
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import React from "react";
+import { Badge, Box, Flex, HStack, Text, VStack } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { colors } from "../../theme";
 
 const RecepientNotificationItem = ({ notification }) => {
+  const navigation = useNavigation();
   const {
     accepted = false,
+    donation = [],
     pickupLocation = "N/A",
     pickupDate = null,
     pickupTime = null,
   } = notification;
 
-  const formattedDate = pickupDate ? new Date(pickupDate).toLocaleDateString() : "N/A";
-  const formattedTime = pickupTime ? new Date(pickupTime).toLocaleTimeString() : "N/A";
+  const donationId = donation[0]?._id;
+
+  const formatPickupDate = (date) => {
+    return date ? new Date(date).toLocaleDateString() : "N/A";
+  };
+
+  const formatPickupTime = (time) => {
+    return time ? new Date(time).toLocaleTimeString() : "N/A";
+  };
 
   return (
     <View style={styles.container}>
@@ -36,10 +45,23 @@ const RecepientNotificationItem = ({ notification }) => {
               />
             </Flex>
             <VStack>
-              <Text bold fontSize="lg" color={accepted ? colors.success : colors.error}>
+              <Text
+                bold
+                fontSize="lg"
+                color={accepted ? colors.success : colors.error}
+              >
                 {accepted ? "Order Accepted" : "Order Rejected"}
               </Text>
             </VStack>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("reschat", { donationId })} 
+            >
+              <MaterialCommunityIcons
+                name="chat"
+                size={24}
+                color={colors.primary_color}
+              />
+            </TouchableOpacity>
             <Badge
               colorScheme={accepted ? "green" : "red"}
               variant="solid"
@@ -49,13 +71,6 @@ const RecepientNotificationItem = ({ notification }) => {
               {accepted ? "Accepted" : "Rejected"}
             </Badge>
           </HStack>
-          <TouchableOpacity  onPress={() => navigation.navigate("reschat")}>
-            <MaterialCommunityIcons
-              name="chat"
-              size={24}
-              color={colors.primary_color}
-            />
-          </TouchableOpacity>
         </HStack>
         <VStack space={1} mt={2}>
           <HStack>
@@ -71,7 +86,7 @@ const RecepientNotificationItem = ({ notification }) => {
               Pickup Date:
             </Text>
             <Text fontSize="md" color="gray.600" ml={1}>
-              {formattedDate}
+              {formatPickupDate(pickupDate)}
             </Text>
           </HStack>
           <HStack>
@@ -79,18 +94,18 @@ const RecepientNotificationItem = ({ notification }) => {
               Pickup Time:
             </Text>
             <Text fontSize="md" color="gray.600" ml={1}>
-              {formattedTime}
+              {formatPickupTime(pickupTime)}
             </Text>
           </HStack>
         </VStack>
       </Box>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 10, 
+    marginBottom: 10,
   },
 });
 

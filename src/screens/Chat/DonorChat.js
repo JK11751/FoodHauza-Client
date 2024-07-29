@@ -6,45 +6,53 @@ import { useAuth } from '../../hooks/useAuth';
 import images from '../../theme/images';
 
 const screenWidth = Dimensions.get('window').width;
-const socket = io("http://10.0.2.2:5000");
+const socket = io("https://foodhauza-backend.onrender.com");
 
 const DonorChat = ({ route }) => {
-    const { user } = useAuth();
-    const { receiverId } = route.params;
-    const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([]);
-  
-    useEffect(() => {
-      socket.on('newMessage', (message) => {
-        if (
-          (message.sender === user._id && message.receiver === receiverId) ||
-          (message.sender === receiverId && message.receiver === user._id)
-        ) {
-          setMessages((prevMessages) => [...prevMessages, message]);
+  const { user } = useAuth();
+  const { receiverId } = route.params;
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    socket.emit('joinChat', { userId: user._id, donationId: receiverId });
+
+    socket.on('chatHistory', (messages) => {
+      setMessages(messages);
+      // Count unread messages
+      const unread = messages.filter(message => !message.read && message.receiver === user._id).length;
+      setUnreadCount(unread);
+    });
+
+    socket.on('newMessage', (message) => {
+      if (
+        (message.sender === user._id && message.receiver === receiverId) ||
+        (message.sender === receiverId && message.receiver === user._id)
+      ) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+        if (!message.read && message.receiver === user._id) {
+          setUnreadCount(prevCount => prevCount + 1);
         }
-      });
-  
-      return () => {
-        socket.off('newMessage');
-      };
-    }, [user._id, receiverId]);
-  
-    const sendMessage = () => {
-      if (message.trim()) {
-        console.log("Sending message:", {
-          senderId: user._id,
-          receiverId: receiverId,
-          content: message,
-        }); // Log the message being sent
-        socket.emit('sendMessage', {
-          senderId: user._id,
-          receiverId: receiverId,
-          content: message,
-        });
-        setMessage('');
       }
+    });
+
+    return () => {
+      socket.off('chatHistory');
+      socket.off('newMessage');
     };
-  
+  }, [user._id, receiverId]);
+
+  const sendMessage = () => {
+    if (message.trim()) {
+      socket.emit('sendMessage', {
+        senderId: user._id,
+        receiverId: receiverId,
+        content: message,
+      });
+      setMessage('');
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -60,20 +68,21 @@ const DonorChat = ({ route }) => {
           data={messages}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
-            <View style={{
-              padding: 8,
-              backgroundColor: item.sender === user._id ? '#3BD37E' : '#fff',
-              marginVertical: 4,
-              borderRadius: 8,
-              alignSelf: item.sender === user._id ? 'flex-end' : 'flex-start',
-              maxWidth: '80%',
-            }}>
+            <View style={[
+              styles.messageBubble,
+              item.sender === user._id
+                ? styles.sentMessage
+                : styles.receivedMessage,
+            ]}>
               <Text>{item.content}</Text>
             </View>
           )}
           contentContainerStyle={{ padding: 16 }}
           style={{ flex: 1, width: screenWidth }}
         />
+        <Text style={styles.unreadCount}>
+          Unread Messages: {unreadCount}
+        </Text>
         <View style={styles.inputContainer}>
           <TextInput
             value={message}
@@ -81,7 +90,7 @@ const DonorChat = ({ route }) => {
             placeholder="Message"
             style={styles.input}
           />
-          <Button  color={colors.primary_color} title="Send" onPress={sendMessage} />
+          <Button color={colors.primary_color} title="Send" onPress={sendMessage} />
         </View>
       </ImageBackground>
     </KeyboardAvoidingView>
@@ -106,10 +115,29 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 16,
     backgroundColor:"white",
-
     padding: 8,
     borderRadius: 25,
     marginRight: 10,
+  },
+  messageBubble: {
+    padding: 8,
+    marginVertical: 4,
+    borderRadius: 8,
+    maxWidth: "80%",
+  },
+  sentMessage: {
+    backgroundColor: '#3BD37E',
+    alignSelf: 'flex-end',
+  },
+  receivedMessage: {
+    backgroundColor: '#fff',
+    alignSelf: 'flex-start',
+  },
+  unreadCount: {
+    alignSelf: 'flex-start',
+    margin: 10,
+    fontSize: 16,
+    color: colors.primary_color,
   },
 });
 
