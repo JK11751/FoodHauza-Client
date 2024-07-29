@@ -117,12 +117,23 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                   color={colors.primary_color}
                 />
               </Flex>
+              <TouchableOpacity
+               onPress={() => navigation.navigate("donorchat", { receiverId: requestor[0]._id })}
+              >
+                <MaterialCommunityIcons
+                  name="chat"
+                  size={24}
+                  color={colors.primary_color}
+                />
+              </TouchableOpacity>
+
             </HStack>
             <Badge
               ml="auto"
               size="md"
               h="30px"
               borderRadius="5px"
+              
               colorScheme={accepted ? "blue" : "green"}
             >
               {accepted ? "Accepted" : "Pending"}

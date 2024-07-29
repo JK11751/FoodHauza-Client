@@ -27,6 +27,8 @@ import CommunityDonationsScreen from "../screens/DonationTips/CommunityDonations
 import VerifyOTP from "../screens/Account/VerifyOTP.js";
 import RecepientNotifications from "../screens/Notifications/RecepientNotifications.js";
 import PickUpLocation from "../screens/SelectLocation/PickUpLocation.js";
+import DonorChat from "../screens/Chat/DonorChat.js";
+import RecepientChat from "../screens/Chat/ResChat.js";
 
 const Stack = createStackNavigator();
 const Tab = createStackNavigator();
@@ -89,6 +91,16 @@ const Navigator = () => {
             <Stack.Screen
               name="Profile"
               component={Profile}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="donorchat"
+              component={DonorChat}
+              options={{ headerShown: false }}
+            />
+              <Stack.Screen
+              name="reschat"
+              component={RecepientChat}
               options={{ headerShown: false }}
             />
             <Stack.Screen

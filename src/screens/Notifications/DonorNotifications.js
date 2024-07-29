@@ -32,8 +32,8 @@ const DonorNotifications = ({ navigation }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPending, setShowPending] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null); // State for selected date
-  const [showDatePicker, setShowDatePicker] = useState(false); // State for showing date picker
+  const [selectedDate, setSelectedDate] = useState(null); 
+  const [showDatePicker, setShowDatePicker] = useState(false); 
 
   const donorId = user?._id;
 

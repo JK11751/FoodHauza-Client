@@ -31,6 +31,7 @@ const DonationDetails = ({ route, navigation }) => {
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
   const auth = useAuth();
+  const [hasRequested, setHasRequested] = useState(false);
   const [requestDetails, setRequestDetails] = useState({});
   const [loading, setLoading] = useState(false);
   const { donation_id } = route.params;
@@ -80,8 +81,31 @@ const DonationDetails = ({ route, navigation }) => {
     }
   };
 
+  const checkUserRequestStatus = async () => {
+    const token = auth.token ? auth.token : null;
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await axios.get(
+        `${BASE_API_URL}/requests/check?donation_id=${donation_id}&requestor_id=${auth.user._id}`,
+        config
+      );
+      setHasRequested(response.data.hasRequested);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+ 
   useEffect(() => {
     fetchRequestDetails();
+    checkUserRequestStatus(); 
   }, [donation_id]);
 
   const [error, setError] = React.useState("");
@@ -336,8 +360,9 @@ const DonationDetails = ({ route, navigation }) => {
                     bg={colors.primary_color}
                     position="relative"
                     onPress={createDonationRequest}
+                    isDisabled={hasRequested} 
                   >
-                    Request Donation
+                    {hasRequested ? "Already Requested" : "Request Donation"}
                   </Button>
                 </Stack>
               </Box>
