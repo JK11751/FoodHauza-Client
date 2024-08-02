@@ -31,13 +31,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary_color,
     backgroundColor: "white",
-    borderRadius: 50,
-    width: 50,
-    height: 50,
+    borderRadius: 5,
+    alignSelf: "center",
+    width: 40,
+    height: 40,
     textAlign: "center",
     fontSize: 20,
-    marginRight: 10,
-    marginLeft: 10,
   },
   otpInput: {
     textAlign: "center",
@@ -50,7 +49,7 @@ const VerifyOTP = ({ route, navigation }) => {
   const { userId } = route.params;
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
-  const [timeLeft, setTimeLeft] = useState(60); // 1 minute countdown
+  const [timeLeft, setTimeLeft] = useState(60); 
   const auth = useAuth();
   const toast = useToast();
   const inputRefs = useRef([]);
@@ -159,7 +158,10 @@ const VerifyOTP = ({ route, navigation }) => {
           </Heading>
           <HStack justifyContent="center" mt={5}>
             {otp.map((digit, index) => (
-              <View key={index} style={styles.otpBox}>
+              <View
+                key={index}
+                style={[styles.otpBox, { marginHorizontal: 5 }]}
+              >
                 <TextInput
                   style={styles.otpInput}
                   keyboardType="numeric"
@@ -172,6 +174,7 @@ const VerifyOTP = ({ route, navigation }) => {
               </View>
             ))}
           </HStack>
+
           <Text mt={2} color="red.500" fontWeight={400} textAlign="center">
             {timeLeft > 0
               ? `OTP expires in ${timeLeft} seconds`

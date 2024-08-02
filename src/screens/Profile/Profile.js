@@ -55,6 +55,14 @@ const Profile = ({ navigation }) => {
     profile_pic: auth.user?.profile_pic || '',
   });
 
+  const navigateBasedOnRole = (target) => {
+    if (auth.user?.role === 'recepient') {
+      navigation.navigate("RecepientDashboard");
+    } else if (auth.user?.role === 'donor') {
+      navigation.navigate("DonorDashboard");
+    } 
+  };
+
   useEffect(() => {
     if (!auth.user) {
     
@@ -163,14 +171,14 @@ const Profile = ({ navigation }) => {
             w={screenWidth}
             position="relative"
             onPress={() => {
-              navigation.navigate("Notifications");
+              navigateBasedOnRole();
             }}
           >
             <HStack paddingTop="20px" alignItems="center">
               <Pressable
-                onPress={() => {
-                  navigation.navigate("Notifications");
-                }}
+               onPress={() => {
+                navigateBasedOnRole();
+              }}
               >
                 <Box ml="20px" p="10px" bg="white" rounded="md">
                   <ChevronLeftIcon color="black" />

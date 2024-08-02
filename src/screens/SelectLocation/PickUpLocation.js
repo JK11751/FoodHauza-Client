@@ -146,7 +146,7 @@ const PickUpLocation = ({ navigation }) => {
                 fetchDetails={true}
                 debounce={400}
                 minLength={2}
-                onPress={(data, details = null) => {
+                onPress={(details = null) => {
                   console.log(details);
                   setOrigin({
                     location: details.geometry.location,

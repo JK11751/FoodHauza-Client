@@ -74,8 +74,7 @@ const SignIn = ({ navigation }) => {
           }
         })
         .catch((err) => {
-          setError(err.message);
-          console.log("upload " + err.message);
+          setError("Login Failed");
         });
     };
   };
