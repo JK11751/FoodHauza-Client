@@ -32,8 +32,8 @@ const DonorNotifications = ({ navigation }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPending, setShowPending] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null); 
-  const [showDatePicker, setShowDatePicker] = useState(false); 
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const donorId = user?._id;
 
@@ -53,6 +53,7 @@ const DonorNotifications = ({ navigation }) => {
       );
       setRequests(response.data);
     } catch (error) {
+      console.error("Failed to fetch requests", error);
     } finally {
       setLoading(false);
     }
@@ -70,11 +71,16 @@ const DonorNotifications = ({ navigation }) => {
   };
 
   const handleUpdate = (updatedRequest) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request._id === updatedRequest._id ? updatedRequest : request
-      )
-    );
+    console.log("Updated Request:", updatedRequest); // Debugging log
+    if (updatedRequest && updatedRequest._id) {
+      setRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request._id === updatedRequest._id ? updatedRequest : request
+        )
+      );
+    } else {
+      console.error("Invalid updatedRequest object:", updatedRequest);
+    }
   };
 
   const filteredRequests = selectedDate
@@ -86,7 +92,7 @@ const DonorNotifications = ({ navigation }) => {
     : requests;
 
   const pendingRequests = filteredRequests.filter(
-    (request) => !request.accepted
+    (request) => request.status === "Pending"
   );
   const pendingRequestsCount = pendingRequests.length;
 
@@ -170,7 +176,7 @@ const DonorNotifications = ({ navigation }) => {
                 <DonorNotificationItem
                   key={request._id}
                   request={request}
-                  onUpdate={handleUpdate} // Pass handleUpdate as onUpdate prop
+                  onUpdate={handleUpdate}
                 />
               ))
             ) : (

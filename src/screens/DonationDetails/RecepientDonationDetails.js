@@ -104,9 +104,7 @@ const DonationDetails = ({ route, navigation }) => {
         {
           donation: [donation_id],
           requestor: [requestor_id],
-          accepted: false,
-          delivered: false,
-          cancelled: false,
+          status: "Pending",
           requested_date: today.toISOString(),
         },
         config
@@ -351,7 +349,8 @@ const DonationDetails = ({ route, navigation }) => {
                         _dark={{ color: "warmGray.200" }}
                         fontWeight="400"
                       >
-                        {requestDetails.location.join(", ")}
+                        {requestDetails.location}
+                        {/* {requestDetails.location.join(", ")}*/}
                       </Text>
                     </HStack>
                   </VStack>

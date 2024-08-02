@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -16,16 +16,19 @@ import {
   Image,
   ThreeDotsIcon,
   CloseIcon,
+  useToast,
 } from "native-base";
 import axios from "axios";
 import { BASE_API_URL } from "../../utils/api";
 import { useAuth } from "../../hooks/useAuth";
 import { colors } from "../../theme";
 
-const DonationItemRecepient = ({ request }) => {
+const DonationItemRecepient = ({ request, fetchRequests }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const toastRef = useRef();
   const auth = useAuth();
 
   const fetchRequestDetails = async () => {
@@ -44,6 +47,7 @@ const DonationItemRecepient = ({ request }) => {
         `${BASE_API_URL}/requests/${request._id}`,
         config
       );
+      console.log("Request details:", response.data);
       setDetails(response.data);
       setLoading(false);
     } catch (error) {
@@ -51,7 +55,33 @@ const DonationItemRecepient = ({ request }) => {
       setLoading(false);
     }
   };
+  const handleDeleteRequest = async () => {
+    const token = auth.token ? auth.token : null;
 
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    try {
+      await axios.delete(`${BASE_API_URL}/requests/${request._id}`, config);
+      setModalVisible(false);
+      fetchRequests();
+      toast.show({
+        description: "Request deleted successfully!",
+        backgroundColor: "green.500",
+        placement: "top",
+        color: "white",
+      });
+    } catch (error) {
+      console.error(
+        "Error deleting request:",
+        error.response?.data || error.message || error
+      );
+    }
+  };
   const handlePress = () => {
     if (!details) {
       fetchRequestDetails();
@@ -113,10 +143,6 @@ const DonationItemRecepient = ({ request }) => {
                   {request.donation[0]?.foods[0]?.amount}{" "}
                   {request.donation[0]?.foods[0]?.unit}
                 </Text>
-                <Text fontStyle="normal" fontWeight="700" fontSize="10px">
-                  {" "}
-                  {request.donation[0]?.foods[0]?.description}
-                </Text>
               </VStack>
             </Box>
             <ThreeDotsIcon paddingTop="80px" color="black" />
@@ -155,7 +181,8 @@ const DonationItemRecepient = ({ request }) => {
                       _dark={{ color: "warmGray.200" }}
                       fontWeight="400"
                     >
-                      {details.donation[0]?.location.join(", ")}
+                      {details.donation[0]?.location}
+                      {/*{details.donation[0]?.location.join(", ")}*/}
                     </Text>
                   </HStack>
                   <HStack space={2} alignItems="center">
@@ -204,40 +231,28 @@ const DonationItemRecepient = ({ request }) => {
                   </Text>
                   <HStack space={2} alignItems="center">
                     <Text color="black" fontWeight="400">
-                      Accepted:
+                      Status:
                     </Text>
                     <Badge
-                    borderRadius={15}
-                      colorScheme={details.accepted ? "green" : "red"}
+                      colorScheme={
+                        details.status === "Accepted"
+                          ? "green"
+                          : details.status === "Rejected"
+                          ? "red"
+                          : "yellow"
+                      }
                       variant="solid"
                     >
-                      {details.accepted ? "Yes" : "No"}
+                      {details.status}
                     </Badge>
                   </HStack>
-                  <HStack space={2} alignItems="center">
-                    <Text color="black" fontWeight="400">
-                      Delivered:
-                    </Text>
-                    <Text
-                      color="coolGray.600"
-                      _dark={{ color: "warmGray.200" }}
-                      fontWeight="400"
-                    >
-                      {details.delivered ? "Yes" : "No"}
-                    </Text>
-                  </HStack>
-                  <HStack space={2} alignItems="center">
-                    <Text color="black" fontWeight="400">
-                      Cancelled:
-                    </Text>
-                    <Text
-                      color="coolGray.600"
-                      _dark={{ color: "warmGray.200" }}
-                      fontWeight="400"
-                    >
-                      {details.cancelled ? "Yes" : "No"}
-                    </Text>
-                  </HStack>
+
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={handleDeleteRequest}
+                  >
+                    <Text style={styles.deleteButtonText}>Delete Request</Text>
+                  </TouchableOpacity>
                 </View>
               )
             )}
@@ -303,5 +318,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.primary_color,
     borderRadius: 20,
+  },
+  deleteButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: colors.primary_color,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    alignSelf: "center",
+    color: "white",
+    fontWeight: "bold",
   },
 });

@@ -34,26 +34,37 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
   const [pickupDate, setPickupDate] = useState(new Date());
   const [pickupTime, setPickupTime] = useState(new Date());
   const [pickupLocation, setPickupLocation] = useState("");
-  const [accepted, setAccepted] = useState(request.accepted);
+  const [status, setStatus] = useState(request.status);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
+  {
+    /*
   useEffect(() => {
     if (selectedLocation) {
       setPickupLocation(selectedLocation);
     }
   }, [selectedLocation]);
-
+*/
+  }
   const handleAccept = async () => {
     try {
-      await axios.put(`${BASE_API_URL}/requests/accept/${request._id}`, {
-        pickupDate,
-        pickupTime,
-        pickupLocation,
-      });
-      setAccepted(true);
-      onUpdate();
+      const response = await axios.put(
+        `${BASE_API_URL}/requests/accept/${request._id}`,
+        {
+          pickupDate,
+          pickupTime,
+          pickupLocation,
+        }
+      );
+
+      if (response.data) {
+        setStatus("Accepted");
+        onUpdate(response.data);
+      } else {
+        console.error("No updated request data received.");
+      }
     } catch (error) {
       console.error("Failed to accept the request", error);
     } finally {
@@ -64,6 +75,7 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
   const handleReject = async () => {
     try {
       await axios.put(`${BASE_API_URL}/requests/reject/${request._id}`);
+      setStatus("Rejected");
       onUpdate();
     } catch (error) {
       console.error("Failed to reject the request", error);
@@ -107,7 +119,11 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                 />
               </Flex>
               <TouchableOpacity
-               onPress={() => navigation.navigate("donorchat", { receiverId: requestor[0]._id })}
+                onPress={() =>
+                  navigation.navigate("donorchat", {
+                    receiverId: requestor[0]._id,
+                  })
+                }
               >
                 <MaterialCommunityIcons
                   name="chat"
@@ -115,17 +131,25 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                   color={colors.primary_color}
                 />
               </TouchableOpacity>
-
             </HStack>
             <Badge
               ml="auto"
               size="md"
               h="30px"
               borderRadius="5px"
-              
-              colorScheme={accepted ? "blue" : "green"}
+              colorScheme={
+                status === "Accepted"
+                  ? "green"
+                  : status === "Rejected"
+                  ? "red"
+                  : "blue"
+              }
             >
-              {accepted ? "Accepted" : "Pending"}
+              {status === "Accepted"
+                ? "Accepted"
+                : status === "Rejected"
+                ? "Rejected"
+                : "Pending"}
             </Badge>
           </HStack>
           <VStack mt={2} space={2}>
@@ -171,13 +195,15 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
             <Modal.CloseButton bgColor={"white"} />
 
             <Modal.Body>
-              <FormControl isDisabled={accepted}>
+              <FormControl
+                isDisabled={status === "Accepted" || status === "Rejected"}
+              >
                 <FormControl.Label fontSize={20}>
                   Pickup Date :
                 </FormControl.Label>
                 <Button
                   onPress={() => setShowDatePicker(true)}
-                  disabled={accepted}
+                  disabled={status === "Accepted" || status === "Rejected"}
                 >
                   {pickupDate ? pickupDate.toLocaleDateString() : "Select Date"}
                 </Button>
@@ -190,13 +216,16 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                   />
                 )}
               </FormControl>
-              <FormControl mt={2} isDisabled={accepted}>
+              <FormControl
+                mt={2}
+                isDisabled={status === "Accepted" || status === "Rejected"}
+              >
                 <FormControl.Label fontSize={20}>
                   Pickup Time :
                 </FormControl.Label>
                 <Button
                   onPress={() => setShowTimePicker(true)}
-                  disabled={accepted}
+                  disabled={status === "Accepted" || status === "Rejected"}
                 >
                   {pickupTime ? pickupTime.toLocaleTimeString() : "Select Time"}
                 </Button>
@@ -209,22 +238,21 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                   />
                 )}
               </FormControl>
-              <Text mt="2">Selected Location: {pickupLocation}</Text>
-              <Button
-                onPress={() => {
-                  navigation.navigate("Location");
-                }}
-                fontSize={20}
-                isDisabled={accepted}
+              <FormControl
+                mt={2}
+                isDisabled={status === "Accepted" || status === "Rejected"}
               >
-                Pickup Point
-              </Button>
-
-              {!pickupLocation && (
-                <Text mt="2" color="gray.500">
-                  No location selected
-                </Text>
-              )}
+                <FormControl.Label fontSize={20}>
+                  Pickup Location :
+                </FormControl.Label>
+                <Input
+                  placeholder="Enter location"
+                  value={pickupLocation}
+                  bgColor={"white"}
+                  onChangeText={setPickupLocation}
+                  isDisabled={status === "Accepted" || status === "Rejected"}
+                />
+              </FormControl>
             </Modal.Body>
             <Modal.Footer bgColor={colors.secondary_color}>
               <Button.Group justifyContent={"center"} width={"full"} space={2}>
@@ -233,7 +261,12 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                   ml={4}
                   colorScheme="green"
                   onPress={handleAccept}
-                  isDisabled={accepted || !pickupDate || !pickupTime || !pickupLocation}
+                  isDisabled={
+                    status !== "Pending" ||
+                    !pickupDate ||
+                    !pickupTime ||
+                    !pickupLocation
+                  }
                 >
                   Accept
                 </Button>
@@ -241,7 +274,7 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                   width={90}
                   colorScheme="gray"
                   onPress={handleReject}
-                  isDisabled={accepted}
+                  isDisabled={status !== "Pending"}
                 >
                   Reject
                 </Button>

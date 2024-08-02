@@ -155,7 +155,7 @@ const RecepientHistory = ({ navigation }) => {
             {filteredRequests?.length > 0 ? (
               <Box>
                 {filteredRequests.map((request) => (
-                  <DonationItemRecepient key={request._id} request={request} />
+                  <DonationItemRecepient key={request._id} request={request} fetchRequests={fetchRequests} />
                 ))}
               </Box>
             ) : (

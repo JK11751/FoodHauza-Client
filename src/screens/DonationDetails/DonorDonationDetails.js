@@ -238,7 +238,8 @@ const DonationDetails = ({ route, navigation }) => {
                                   _dark={{ color: "warmGray.200" }}
                                   fontWeight="400"
                                 >
-                                  {requestDetails.location.join(", ")}
+                                  {requestDetails.location}
+                                 {/* {requestDetails.location.join(", ")}*/}
                                 </Text>
                               </HStack>
                               <HStack space={2} alignItems="center">

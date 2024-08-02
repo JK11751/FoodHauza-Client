@@ -1,31 +1,8 @@
-/* eslint-disable import/no-unresolved */
 import React, { useState, useRef, useEffect } from "react";
-import { Platform, StyleSheet, Dimensions, TextInput } from "react-native";
-import { GOOGLE_MAPS_APIKEY } from "@env";
-import {
-  Box,
-  Button,
-  ChevronLeftIcon,
-  Flex,
-  HStack,
-  Icon,
-  Image,
-  Text,
-  View,
-  Spacer,
-  StatusBar,
-  ThreeDotsIcon,
-  VStack,
-  Input,
-  Pressable,
-  useToast,
-  KeyboardAvoidingView,
-  Spinner,
-} from "native-base";
+import { StyleSheet, Dimensions } from "react-native";
+import { Box, Button, ChevronLeftIcon, HStack, Text, View, Spacer, StatusBar, ThreeDotsIcon, VStack, Input, Pressable, useToast, KeyboardAvoidingView, Spinner } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../theme";
-import MapDisplay from "../../components/Map";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const screenHeight = Dimensions.get("window").height;
@@ -40,12 +17,6 @@ const styles = StyleSheet.create({
     backgroundColor: "none",
     height: screenHeight,
   },
-  img: {
-    height: "100%",
-    width: screenWidth,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   input: {
     marginTop: 10,
     height: 50,
@@ -53,15 +24,12 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: "#f3f3f3",
     margin: 12,
-    // borderWidth: 1,
     padding: 10,
   },
 });
 
 const PickUpLocation = ({ navigation }) => {
   const [origin, setOrigin] = useState({
-    location: "",
-    description: "",
     address: "",
   });
   const [loading, setLoading] = useState(false);
@@ -69,9 +37,9 @@ const PickUpLocation = ({ navigation }) => {
   const toastRef = useRef();
 
   const handleConfirmPickupPoint = () => {
-    if (!origin.location) {
+    if (!origin.address) {
       toast.show({
-        description: "Please select a location first",
+        description: "Please enter a location",
         status: "warning",
       });
       return;
@@ -80,7 +48,7 @@ const PickUpLocation = ({ navigation }) => {
     setLoading(true);
     try {
       navigation.navigate("DonorNotificationItem", {
-        selectedLocation: origin.description,
+        selectedLocation: origin.address,
       });
       toast.show({
         description: "Pickup point confirmed successfully!",
@@ -123,56 +91,12 @@ const PickUpLocation = ({ navigation }) => {
                     </Box>
                   </Pressable>
                   <Spacer />
-
-                  <Spacer />
                   <Box mr="20px" p="10px" bg="white" rounded="md">
                     <ThreeDotsIcon color="black" />
                   </Box>
                 </HStack>
               </Box>
             </Box>
-            <Box
-              w={screenWidth}
-              px={30}
-              py={5}
-              position={"absolute"}
-              top={16}
-              zIndex="10"
-            >
-              <GooglePlacesAutocomplete
-                placeholder="Search Location"
-                nearbyPlacesAPI="GooglePlacesSearch"
-                enablePoweredByContainer={false}
-                fetchDetails={true}
-                debounce={400}
-                minLength={2}
-                onPress={(details = null) => {
-                  console.log(details);
-                  setOrigin({
-                    location: details.geometry.location,
-                    description: details.description,
-                    address: details.formatted_address,
-                  });
-                }}
-                query={{
-                  key: GOOGLE_MAPS_APIKEY,
-                  language: "en",
-                }}
-                styles={{
-                  container: {
-                    flex: 0,
-                  },
-                  textInput: {
-                    fontSize: 12,
-                    width: 200,
-                    backgroundColor: "#fafafa",
-                  },
-                }}
-              />
-            </Box>
-            <View h={500}>
-              <MapDisplay origin={origin} />
-            </View>
             <VStack
               pt="10"
               alignItems="center"
@@ -180,7 +104,7 @@ const PickUpLocation = ({ navigation }) => {
               backgroundColor="white"
             >
               <Text fontWeight="bold" fontSize="20px">
-                Select pick-up Location
+                Enter pick-up Location
               </Text>
               <Box w={screenWidth} px={30} py={1}>
                 <Box mb="5">
@@ -189,8 +113,9 @@ const PickUpLocation = ({ navigation }) => {
                     width="290"
                     mt="5"
                     variant="rounded"
-                    placeholder="Search Location...."
+                    placeholder="Enter Location...."
                     value={origin.address}
+                    onChangeText={(text) => setOrigin({ address: text })}
                     InputRightElement={
                       <MaterialIcons mr={5} size={24} name="location-pin" />
                     }

@@ -1,15 +1,12 @@
-/* eslint-disable import/no-unresolved */
-import React, { useState, useRef,useEffect } from 'react'
-import { Platform, StyleSheet, Dimensions, TextInput } from 'react-native'
-import {GOOGLE_MAPS_APIKEY} from "@env";
+import React, { useState, useRef, useEffect } from 'react';
+import { StyleSheet, Dimensions, TextInput } from 'react-native';
+import { GOOGLE_MAPS_APIKEY } from "@env";
 import {
   Box,
   Button,
   ChevronLeftIcon,
-  Flex,
   HStack,
   Icon,
-  Image,
   Text,
   View,
   Spacer,
@@ -21,21 +18,18 @@ import {
   useToast,
   KeyboardAvoidingView,
 } from "native-base";
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { colors } from '../../theme'
-import MapDisplay from '../../components/Map'
-import RequestReceivedAlert from '../../components/RequestReceivedAlert'
-import { useAuth } from '../../hooks/useAuth'
-import { DonationPackState} from '../../context'
-import { BASE_API_URL } from '../../utils/api'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../theme';
+import RequestReceivedAlert from '../../components/RequestReceivedAlert';
+import { useAuth } from '../../hooks/useAuth';
+import { DonationPackState } from '../../context';
+import { BASE_API_URL } from '../../utils/api';
 import axios from 'axios';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { MaterialIcons } from '@expo/vector-icons';
 import { clearPack } from '../../utils/pack.utils';
 
-const screenHeight = Dimensions.get('window').height
-const screenWidth = Dimensions.get('window').width
+const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   root: {
@@ -59,60 +53,55 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: '#f3f3f3',
     margin: 12,
-    // borderWidth: 1,
     padding: 10,
   },
-})
+});
 
 const SelectLocation = ({ navigation }) => {
-  const [show, setShow] = React.useState(false)
+  const [show, setShow] = React.useState(false);
   const [origin, setOrigin] = useState({
-    location: "",
-    description: "",
     address: "",
   });
-    const [error, setError] = React.useState("");
-    const auth = useAuth();
-    const {donationPack, setDonationPack} = DonationPackState()
-    const [loading, setLoading] = useState(false);
-    const toast = useToast();
-    const toastRef = useRef();
+  const [error, setError] = React.useState("");
+  const auth = useAuth();
+  const { donationPack, setDonationPack } = DonationPackState();
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const toastRef = useRef();
+
   const data = {
     "foods": donationPack,
-    "location": origin,
+    "location": origin.address, // Use address directly
     "creator": auth.user._id,
-    "cancelled": false,
-    "approved": false,
+    "status": "Pending",
     "requested": false,
   };
 
-
   const createDonation = async () => {
-     const token = auth.token ? auth.token : null;
+    const token = auth.token ? auth.token : null;
 
-     const config = {
-       headers: {
-         "Content-type": "application/json",
-         Authorization: `Bearer ${token}`,
-       },
-     };
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
 
-     try {
-       setLoading(true);
-       const response = await axios.post(`${BASE_API_URL}/donations`,data ,config);
-       if (response.data && response.status === 201) {
-         setLoading(false);
-
-         // Success 🎉
-         console.log("response", response);
-         clearPack(setDonationPack)
-         setShow(true)
-       }
-      console.log(data)
-      } catch {(err) => {
-        setError(err.message);
-        console.log("upload " + err.message);
-      }}};
+    try {
+      setLoading(true);
+      const response = await axios.post(`${BASE_API_URL}/donations`, data, config);
+      if (response.data && response.status === 201) {
+        setLoading(false);
+        console.log("response", response);
+        clearPack(setDonationPack);
+        setShow(true);
+      }
+      console.log(data);
+    } catch (err) {
+      setError(err.message);
+      console.log("upload " + err.message);
+    }
+  };
 
   useEffect(() => {
     if (error) {
@@ -135,6 +124,7 @@ const SelectLocation = ({ navigation }) => {
       placement: "top",
     });
   };
+
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardAvoidingView>
@@ -162,63 +152,19 @@ const SelectLocation = ({ navigation }) => {
                     </Box>
                   </Pressable>
                   <Spacer />
-
-                  <Spacer />
                   <Box mr="20px" p="10px" bg="white" rounded="md">
                     <ThreeDotsIcon color="black" />
                   </Box>
                 </HStack>
               </Box>
             </Box>
-            <Box
-              w={screenWidth}
-              px={30}
-              py={5}
-              position={"absolute"}
-              top={16}
-              zIndex="10"
-            >
-              <GooglePlacesAutocomplete
-                placeholder="Search Location"
-                nearbyPlacesAPI="GooglePlacesSearch"
-                enablePoweredByContainer={false}
-                fetchDetails={true}
-                debounce={400}
-                minLength={2}
-                onPress={(data, details = null) => {
-                  console.log(details);
-                  setOrigin({
-                    location: details.geometry.location,
-                    description: details.description,
-                    address: details.formatted_address,
-                  });
-                }}
-                query={{
-                  key: GOOGLE_MAPS_APIKEY,
-                  language: "en",
-                }}
-                styles={{
-                  container: {
-                    flex: 0,
-                  },
-                  textInput: {
-                    fontSize: 12,
-                    width: 200,
-                    backgroundColor: "#fafafa",
-                  },
-                }}
-              />
-            </Box>
-            <View h={500}>
-              <MapDisplay origin={origin} />
-            </View>
             <VStack
               pt="10"
               alignItems="center"
               justifyContent="center"
               backgroundColor="white"
             >
-              <Text fontWeight="bold" fontSize="20px" te>
+              <Text fontWeight="bold" fontSize="20px">
                 Select pick-up Location
               </Text>
               <Box w={screenWidth} px={30} py={1}>
@@ -228,8 +174,9 @@ const SelectLocation = ({ navigation }) => {
                     width="290"
                     mt="5"
                     variant="rounded"
-                    placeholder="Search Location...."
+                    placeholder="Enter Location...."
                     value={origin.address}
+                    onChangeText={(text) => setOrigin({ address: text })}
                     InputRightElement={<MaterialIcons mr={5} size={24} name="location-pin" />}
                   />
                 </Box>
@@ -258,4 +205,4 @@ const SelectLocation = ({ navigation }) => {
   );
 }
 
-export default SelectLocation
+export default SelectLocation;

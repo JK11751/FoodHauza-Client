@@ -19,7 +19,7 @@ const DonorChat = ({ route }) => {
     socket.emit('joinChat', { userId: user._id, donationId: receiverId });
 
     socket.on('chatHistory', (messages) => {
-      setMessages(messages);
+      setMessages(messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)));
       // Count unread messages
       const unread = messages.filter(message => !message.read && message.receiver === user._id).length;
       setUnreadCount(unread);
@@ -30,7 +30,7 @@ const DonorChat = ({ route }) => {
         (message.sender === user._id && message.receiver === receiverId) ||
         (message.sender === receiverId && message.receiver === user._id)
       ) {
-        setMessages((prevMessages) => [...prevMessages, message]);
+        setMessages(prevMessages => [...prevMessages, message].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)));
         if (!message.read && message.receiver === user._id) {
           setUnreadCount(prevCount => prevCount + 1);
         }
@@ -79,6 +79,7 @@ const DonorChat = ({ route }) => {
           )}
           contentContainerStyle={{ padding: 16 }}
           style={{ flex: 1, width: screenWidth }}
+          inverted // This property will invert the FlatList to display the most recent messages at the bottom.
         />
         <Text style={styles.unreadCount}>
           Unread Messages: {unreadCount}
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     paddingLeft: 16,
-    backgroundColor:"white",
+    backgroundColor: "white",
     padding: 8,
     borderRadius: 25,
     marginRight: 10,

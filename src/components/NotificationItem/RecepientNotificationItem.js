@@ -8,7 +8,7 @@ import { colors } from "../../theme";
 const RecepientNotificationItem = ({ notification }) => {
   const navigation = useNavigation();
   const {
-    accepted = false,
+    status,
     donation = [],
     pickupLocation = "N/A",
     pickupDate = null,
@@ -25,11 +25,33 @@ const RecepientNotificationItem = ({ notification }) => {
     return time ? new Date(time).toLocaleTimeString() : "N/A";
   };
 
+  const getStatusText = (status) => {
+    switch (status) {
+      case "Accepted":
+        return "Order Accepted";
+      case "Rejected":
+        return "Order Rejected";
+      default:
+        return "Order Pending";
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Accepted":
+        return colors.success;
+      case "Rejected":
+        return colors.error;
+      default:
+        return colors.primary_color; 
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Box bg="white" shadow={2} mt={3} p={4} borderRadius="10px">
         <HStack alignItems="center" justifyContent="space-between">
-          <HStack alignItems="center" space={3}>
+        <HStack alignItems="center" space={3}>
             <Flex
               h="40px"
               w="40px"
@@ -48,9 +70,9 @@ const RecepientNotificationItem = ({ notification }) => {
               <Text
                 bold
                 fontSize="lg"
-                color={accepted ? colors.success : colors.error}
+                color={getStatusColor(status)}
               >
-                {accepted ? "Order Accepted" : "Order Rejected"}
+                {getStatusText(status)}
               </Text>
             </VStack>
             <TouchableOpacity
@@ -63,12 +85,12 @@ const RecepientNotificationItem = ({ notification }) => {
               />
             </TouchableOpacity>
             <Badge
-              colorScheme={accepted ? "green" : "red"}
+              colorScheme={status === "Accepted" ? "green" : status === "Rejected" ? "red" : "blue"}
               variant="solid"
               borderRadius="4px"
               _text={{ color: "white" }}
             >
-              {accepted ? "Accepted" : "Rejected"}
+              {status}
             </Badge>
           </HStack>
         </HStack>
