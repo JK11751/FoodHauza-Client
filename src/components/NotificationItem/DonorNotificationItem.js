@@ -72,17 +72,6 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`${BASE_API_URL}/requests/${request._id}`);
-      onUpdate();
-    } catch (error) {
-      console.error("Failed to delete the request", error);
-    } finally {
-      setModalVisible(false);
-    }
-  };
-
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
@@ -255,14 +244,6 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
                   isDisabled={accepted}
                 >
                   Reject
-                </Button>
-                <Button
-                  width={90}
-                  mr={4}
-                  colorScheme="red"
-                  onPress={handleDelete}
-                >
-                  Delete
                 </Button>
               </Button.Group>
             </Modal.Footer>

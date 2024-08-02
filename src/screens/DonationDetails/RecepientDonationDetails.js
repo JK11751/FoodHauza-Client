@@ -27,14 +27,19 @@ import { BASE_API_URL } from "../../utils/api";
 import RequestReceived from "../../components/RecepientRequest/RecepientRequest";
 
 const DonationDetails = ({ route, navigation }) => {
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = useState(false);
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
   const auth = useAuth();
   const [hasRequested, setHasRequested] = useState(false);
   const [requestDetails, setRequestDetails] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { donation_id } = route.params;
+  const toast = useToast();
+  const toastRef = useRef();
+  const [error, setError] = useState("");
+  const today = new Date();
+  const requestor_id = auth.user._id;
 
   const fetchRequestDetails = async () => {
     const token = auth.token ? auth.token : null;
@@ -47,37 +52,17 @@ const DonationDetails = ({ route, navigation }) => {
     };
 
     try {
-      setLoading(true);
       const response = await axios.get(
         `${BASE_API_URL}/donations/${donation_id}`,
         config
       );
       if (response.data) {
-        setLoading(false);
         setRequestDetails(response.data);
       }
     } catch (error) {
-      // Error 😨
-      if (error.response) {
-        /*
-         * The request was made and the server responded with a
-         * status code that falls out of the range of 2xx
-         */
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        /*
-         * The request was made but no response was received, `error.request`
-         * is an instance of XMLHttpRequest in the browser and an instance
-         * of http.ClientRequest in Node.js
-         */
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request and triggered an Error
-        console.log("Error", error.message);
-      }
-      console.log(error);
+      handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,29 +83,8 @@ const DonationDetails = ({ route, navigation }) => {
       );
       setHasRequested(response.data.hasRequested);
     } catch (error) {
-      console.log(error);
+      handleError(error);
     }
-  };
-
- 
-  useEffect(() => {
-    fetchRequestDetails();
-    checkUserRequestStatus(); 
-  }, [donation_id]);
-
-  const [error, setError] = React.useState("");
-  const toast = useToast();
-  const toastRef = useRef();
-  const today = new Date();
-  const requestor_id = auth.user._id;
-
-  const data = {
-    donation: [donation_id],
-    requestor: [requestor_id],
-    accepted: false,
-    delivered: false,
-    cancelled: false,
-    requested_date: today.toISOString(),
   };
 
   const createDonationRequest = async () => {
@@ -137,34 +101,81 @@ const DonationDetails = ({ route, navigation }) => {
       setLoading(true);
       const response = await axios.post(
         `${BASE_API_URL}/requests`,
-        data,
+        {
+          donation: [donation_id],
+          requestor: [requestor_id],
+          accepted: false,
+          delivered: false,
+          cancelled: false,
+          requested_date: today.toISOString(),
+        },
         config
       );
       if (response.data && response.status === 201) {
-        setLoading(false);
-
-        // Success 🎉
-        console.log("response", response);
         setShow(true);
       }
-      console.log(data);
-    } catch {
-      (err) => {
-        setLoading(false);
-        setError(err.message);
-        console.log("upload " + err.message);
-      };
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        if (
+          error.response.data.message ===
+          "This donation has already been requested"
+        ) {
+          toast.show({
+            render: () => (
+              <Box
+                bg="red.500"
+                _text={{ color: "white" }}
+                px="2"
+                py="1"
+                rounded="sm"
+              >
+                This donation has already been requested
+              </Box>
+            ),
+            placement: "bottom",
+          });
+        } else {
+          toast.show({
+            title: "An error occurred. Please try again.",
+            status: "danger",
+            placement: "top",
+          });
+        }
+      } else {
+        toast.show({
+          title: "An error occurred. Please try again.",
+          status: "danger",
+          placement: "top",
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleError = (error) => {
+    if (error.response) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    } else if (error.request) {
+      console.log(error.request);
+    } else {
+      console.log("Error", error.message);
+    }
+    setError(error.message);
+  };
+
+  useEffect(() => {
+    fetchRequestDetails();
+    checkUserRequestStatus();
+  }, [donation_id]);
 
   useEffect(() => {
     if (error) {
       showMessage(error);
     }
-    if (loading) {
-      showLoading("loading");
-    }
-  }, [error, loading]);
+  }, [error]);
 
   const showMessage = (errMessage) => {
     toastRef.current = toast.show({
@@ -172,14 +183,6 @@ const DonationDetails = ({ route, navigation }) => {
       placement: "top",
     });
   };
-
-  const showLoading = (loadingText) => {
-    toastRef.current = toast.show({
-      title: loadingText,
-      placement: "top",
-    });
-  };
-
   return (
     <View background={"white"} h={screenHeight}>
       <Box backgroundColor="#FFFFFF">
@@ -360,7 +363,7 @@ const DonationDetails = ({ route, navigation }) => {
                     bg={colors.primary_color}
                     position="relative"
                     onPress={createDonationRequest}
-                    isDisabled={hasRequested} 
+                    isDisabled={hasRequested}
                   >
                     {hasRequested ? "Already Requested" : "Request Donation"}
                   </Button>

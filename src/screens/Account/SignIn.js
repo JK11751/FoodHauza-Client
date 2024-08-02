@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Dimensions, ImageBackground, View, StyleSheet } from 'react-native';
 import { colors } from 'theme';
+import Feather from "react-native-vector-icons/Feather";
 import validator from "validator";
 import {
   Box,
@@ -11,6 +12,8 @@ import {
   FormControl,
   Input,
   Button,
+  IconButton,
+  Icon as NIcon,
   HStack,
   useToast,
 } from 'native-base';
@@ -39,11 +42,13 @@ const styles = StyleSheet.create({
 const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const toast = useToast();
   const toastRef = useRef();
-  const showPassword = () => setShow(!show);
   const auth = useAuth();
+
+  const showPassword = () => setShow(!show);
 
   const onSubmit = async () => {
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
@@ -149,9 +154,16 @@ const SignIn = ({ navigation }) => {
                 borderRadius={"40px"}
                 placeholder="............"
                 bg="#FFFFFF"
-                type="password"
+                type={show ? 'text' : 'password'}
                 value={password}
                 onChangeText={val => setPassword(val)}
+                InputRightElement={
+                  <IconButton
+                    onPress={showPassword}
+                    colorScheme="light"
+                    icon={<NIcon as={Feather} name={show ? 'eye-off' : 'eye'} size={5} />}
+                  />
+                }
               />
             </FormControl>
             <Link

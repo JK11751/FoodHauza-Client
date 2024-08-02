@@ -43,14 +43,15 @@ const styles = StyleSheet.create({
   },
 })
 const SignUp = ({navigation}) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [image, setImage] = useState(null);
-  const [show, setShow] = useState("");
-  const [error, setError] = useState([]);
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState('');
   const toast = useToast();
   const toastRef = useRef();
+
   const showPassword = () => setShow(!show);
 
   const onSubmitChange = () => {
@@ -174,31 +175,17 @@ const SignUp = ({navigation}) => {
             <FormControl>
               <FormControl.Label>Password</FormControl.Label>
               <Input
-                borderRadius={"40px"}
+                borderRadius="40px"
                 placeholder="............"
                 bg="#FFFFFF"
-                type="password"
+                type={show ? 'text' : 'password'}
                 value={password}
-                onChangeText={(val) => setPassword(val)}
-                leftIcon={
-                  <NIcon
-                    type="font-awesome"
-                    name="lock"
-                    size={20}
-                    color="#14213d"
-                  />
-                }
-                rightIcon={
+                onChangeText={setPassword}
+                InputRightElement={
                   <IconButton
                     onPress={showPassword}
-                    colorScheme={"light"}
-                    icon={
-                      <NIcon
-                        as={Feather}
-                        name={show ? "eye-off" : "eye"}
-                        size={5}
-                      />
-                    }
+                    colorScheme="light"
+                    icon={<NIcon as={Feather} name={show ? 'eye-off' : 'eye'} size={5} />}
                   />
                 }
               />

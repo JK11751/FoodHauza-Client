@@ -1,16 +1,16 @@
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
-import { Flex, Box, ChevronRightIcon } from 'native-base'
-import PropTypes from 'prop-types'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { Flex, Box, ChevronRightIcon } from 'native-base';
+import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
   },
-})
+});
 
-const HomeCard = ({ title, description, onPress }) => (
-  <TouchableOpacity onPress={onPress} >
+const HomeCard = ({ title = '', description = '', onPress = () => {} }) => (
+  <TouchableOpacity onPress={onPress}>
     <Flex
       px="30px"
       py="35px"
@@ -25,7 +25,7 @@ const HomeCard = ({ title, description, onPress }) => (
       <ChevronRightIcon />
     </Flex>
   </TouchableOpacity>
-)
+);
 
 HomeCard.propTypes = {
   title: PropTypes.string,
@@ -33,10 +33,4 @@ HomeCard.propTypes = {
   onPress: PropTypes.func,
 };
 
-HomeCard.defaultProps = {
-  title: null,
-  description: null,
-  onPress: () => {},
-};
-
-export default HomeCard
+export default HomeCard;
