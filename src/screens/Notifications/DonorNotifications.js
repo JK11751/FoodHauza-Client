@@ -70,7 +70,7 @@ const DonorNotifications = ({ navigation }) => {
     setSelectedDate(null);
   };
 
-  const handleUpdate = (updatedRequest) => {
+  /*const handleUpdate = (updatedRequest) => {
     console.log("Updated Request:", updatedRequest); // Debugging log
     if (updatedRequest && updatedRequest._id) {
       setRequests((prevRequests) =>
@@ -82,6 +82,7 @@ const DonorNotifications = ({ navigation }) => {
       console.error("Invalid updatedRequest object:", updatedRequest);
     }
   };
+  */
 
   const filteredRequests = selectedDate
     ? requests.filter((request) => {
@@ -176,7 +177,7 @@ const DonorNotifications = ({ navigation }) => {
                 <DonorNotificationItem
                   key={request._id}
                   request={request}
-                  onUpdate={handleUpdate}
+                  //onUpdate={handleUpdate}
                 />
               ))
             ) : (
@@ -193,7 +194,7 @@ const DonorNotifications = ({ navigation }) => {
                 <DonorNotificationItem
                   key={request._id}
                   request={request}
-                  onUpdate={handleUpdate} // Pass handleUpdate as onUpdate prop
+                  //onUpdate={handleUpdate} // Pass handleUpdate as onUpdate prop
                 />
               ))
             ) : (

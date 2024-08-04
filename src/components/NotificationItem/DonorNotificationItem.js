@@ -25,7 +25,7 @@ import axios from "axios";
 import { BASE_API_URL } from "../../utils/api";
 import images from "../../theme/images";
 
-const DonorNotificationItem = ({ request, onUpdate }) => {
+const DonorNotificationItem = ({ request }) => {
   const route = useRoute();
   const navigation = useNavigation();
   const { selectedLocation } = route.params || {};
@@ -61,7 +61,6 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
 
       if (response.data) {
         setStatus("Accepted");
-        onUpdate(response.data);
       } else {
         console.error("No updated request data received.");
       }
@@ -76,7 +75,6 @@ const DonorNotificationItem = ({ request, onUpdate }) => {
     try {
       await axios.put(`${BASE_API_URL}/requests/reject/${request._id}`);
       setStatus("Rejected");
-      onUpdate();
     } catch (error) {
       console.error("Failed to reject the request", error);
     } finally {
