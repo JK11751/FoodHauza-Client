@@ -155,7 +155,7 @@ const RecepientDash = ({navigation}) => {
                   <>
                     <Text style={styles.title}>Hi, {auth.user.name}</Text>
                     <Text style={styles.title_desc}>
-                      What would you like to donate today?
+                    Check out recent food donations here
                     </Text>
                   </>
                 ) : (
