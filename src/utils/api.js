@@ -1,1 +1,1 @@
-export const BASE_API_URL = `https://foodhauza-backend.onrender.com/api`;
+export const BASE_API_URL = `https://foodhauza-backend-rb0s.onrender.com/api`;
